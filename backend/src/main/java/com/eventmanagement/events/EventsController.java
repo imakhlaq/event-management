@@ -1,19 +1,28 @@
 package com.eventmanagement.events;
 
+import com.eventmanagement.events.service.IEventService;
+import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
+import org.springframework.security.oauth2.client.annotation.RegisteredOAuth2AuthorizedClient;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Calendar;
+
 @RestController("/apiv1/events")
+//@Api(tags = "Google Calendar Integration Controller")
+@AllArgsConstructor
 public class EventsController {
 
-    @GetMapping
-    public ResponseEntity<?> getAllEvents(@AuthenticationPrincipal OAuth2User principle) {
+    final private IEventService eventService;
 
-        p
+    @GetMapping(path = "/get-events", produces = "application/json")
+    // @ApiOperation("Gat all the events from the calendar")
+    public ResponseEntity<?> getAllEvents(@RegisteredOAuth2AuthorizedClient("google") OAuth2AuthorizedClient oAuth2Client) {
 
-        return null;
+        return ResponseEntity.ok(eventService.getAllEvents(oAuth2Client));
     }
 
     @PostMapping("/add-events")
