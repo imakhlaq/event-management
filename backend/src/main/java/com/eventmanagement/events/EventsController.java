@@ -1,13 +1,17 @@
 package com.eventmanagement.events;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.*;
 
 @RestController("/apiv1/events")
 public class EventsController {
 
     @GetMapping
-    public ResponseEntity<?> getAllEvents() {
+    public ResponseEntity<?> getAllEvents(@AuthenticationPrincipal OAuth2User principle) {
+
+        p
 
         return null;
     }

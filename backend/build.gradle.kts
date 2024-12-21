@@ -35,6 +35,9 @@ dependencies {
     annotationProcessor("org.projectlombok:lombok")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+    // https://mvnrepository.com/artifact/com.google.api-client/google-api-client
+    implementation("com.google.api-client:google-api-client:2.7.1")
+
 }
 
 tasks.withType<Test> {
