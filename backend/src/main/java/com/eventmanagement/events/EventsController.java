@@ -3,7 +3,7 @@ package com.eventmanagement.events;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@RestController("/apiv1/events/")
+@RestController("/apiv1/events")
 public class EventsController {
 
     @GetMapping
@@ -24,7 +24,7 @@ public class EventsController {
         return null;
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<?> deleteEvents(@PathVariable String id) {
 
         return null;
