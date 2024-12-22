@@ -38,7 +38,7 @@ dependencies {
 // https://mvnrepository.com/artifact/com.google.api-client/google-api-client
     implementation("com.google.api-client:google-api-client:2.7.1")
     // https://mvnrepository.com/artifact/com.google.apis/google-api-services-calendar
-    implementation("com.google.apis:google-api-services-calendar:v3-rev411-1.25.0")
+    implementation("com.google.apis:google-api-services-calendar:v3-rev20220715-2.0.0")
 
 }
 

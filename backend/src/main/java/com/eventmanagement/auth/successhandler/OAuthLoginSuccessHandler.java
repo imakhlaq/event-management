@@ -6,23 +6,14 @@ import com.eventmanagement.utils.TokenUtils;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.checkerframework.checker.units.qual.A;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
-import org.springframework.security.oauth2.client.annotation.RegisteredOAuth2AuthorizedClient;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
-import org.springframework.security.web.DefaultRedirectStrategy;
-import org.springframework.security.web.RedirectStrategy;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 
 import java.io.IOException;
-import java.util.Map;
 
 @Slf4j
 @Component
@@ -48,8 +39,8 @@ public class OAuthLoginSuccessHandler implements AuthenticationSuccessHandler {
         var username = oAuth2Client.getPrincipal().getName();
         var authid = oAuth2Client.getAuthorizedClientRegistrationId();
 
-        log.debug("Got Refresh_Token and stored it in db");
-        log.debug("Refresh_Token is {} and user name is {}", refreshToken, username);
+        log.info("Got Refresh_Token and stored it in db");
+        log.info("Refresh_Token is {} and user name is {}", refreshToken, username);
         //insert token in the refresh_token into db
         var user = new User();
         user.setUsername(username);

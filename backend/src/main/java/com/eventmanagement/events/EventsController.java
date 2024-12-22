@@ -2,6 +2,7 @@ package com.eventmanagement.events;
 
 import com.eventmanagement.events.service.IEventService;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
@@ -13,9 +14,11 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.Calendar;
 
-@RestController("/apiv1/events")
+@RestController
+@RequestMapping(path = "/apiv1/events")
 //@Api(tags = "Google Calendar Integration Controller")
 @AllArgsConstructor
+@Slf4j
 public class EventsController {
 
     final private IEventService eventService;
@@ -23,6 +26,8 @@ public class EventsController {
     @GetMapping(path = "/get-events", produces = "application/json")
     // @ApiOperation("Gat all the events from the calendar")
     public ResponseEntity<?> getAllEvents(@RegisteredOAuth2AuthorizedClient("google") OAuth2AuthorizedClient oAuth2Client) throws GeneralSecurityException, IOException {
+
+        log.info("Request received for all events");
 
         return ResponseEntity.ok(eventService.getAllEvents(oAuth2Client));
     }

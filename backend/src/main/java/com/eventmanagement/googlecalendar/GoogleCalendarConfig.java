@@ -4,8 +4,10 @@ import com.eventmanagement.auth.repository.IUserRepo;
 import com.eventmanagement.exception.custom.NoRefreshTokenException;
 import com.eventmanagement.utils.TokenUtils;
 import com.google.api.client.auth.oauth2.BearerToken;
+import com.google.api.client.auth.oauth2.ClientParametersAuthentication;
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
+import com.google.api.client.http.GenericUrl;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.gson.GsonFactory;
@@ -19,6 +21,8 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 
+import static com.google.api.client.googleapis.auth.oauth2.GoogleOAuthConstants.TOKEN_SERVER_URL;
+
 @Component
 @Slf4j
 public class GoogleCalendarConfig {
@@ -28,6 +32,10 @@ public class GoogleCalendarConfig {
     private final TokenUtils tokenUtils;
     //Global instance of the JSON factory.
     private final JsonFactory JSON_FACTORY = GsonFactory.getDefaultInstance();
+    @Value("${client-id}")
+    private String clientId;
+    @Value("${client-secret}")
+    private String clientSecret;
 
     public GoogleCalendarConfig(IUserRepo userRepo, @Value("${app.name}") String appName, TokenUtils tokenUtils) {
         this.userRepo = userRepo;
@@ -35,20 +43,25 @@ public class GoogleCalendarConfig {
         this.tokenUtils = tokenUtils;
     }
 
-    private Calendar getCalendar(OAuth2AuthorizedClient client) throws GeneralSecurityException, IOException {
-        HttpTransport httpTransport = GoogleNetHttpTransport.newTrustedTransport();
-
-        Credential credential = new Credential(BearerToken.authorizationHeaderAccessMethod());
-        credential.setAccessToken(client.getAccessToken().getTokenValue());
+    public Calendar getCalendar(OAuth2AuthorizedClient client) throws GeneralSecurityException, IOException {
+        HttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
 
         var user = userRepo.findUserByUsername(client.getPrincipalName());
         if (!user.isPresent()) throw new NoRefreshTokenException("/", HttpStatus.BAD_REQUEST, "No Refresh Token Exits");
 
-        credential.setRefreshToken(user.get().getRefreshToken());
+        // Build the Credential with the Builder
+        Credential builder = new Credential.Builder(BearerToken.authorizationHeaderAccessMethod())
+            .setJsonFactory(JSON_FACTORY)
+            .setTransport(HTTP_TRANSPORT)
+            .setTokenServerUrl(new GenericUrl(TOKEN_SERVER_URL))
+            .setClientAuthentication(new ClientParametersAuthentication(clientId, clientSecret))
+            .build()
+            .setAccessToken(client.getAccessToken().getTokenValue())
+            .setRefreshToken(user.get().getRefreshToken());
 
-        log.debug("Connecting to the Google Calender Server");
+        log.info("Connecting to the Google Calender Server");
 
-        return new Calendar.Builder(httpTransport, JSON_FACTORY, credential)
+        return new Calendar.Builder(HTTP_TRANSPORT, JSON_FACTORY, builder)
             .setApplicationName(APPLICATION_NAME)
             .build();
     }
