@@ -40,8 +40,15 @@ public class EventsController {
     })
     public ResponseEntity<?> getAllEvents(@RegisteredOAuth2AuthorizedClient("google") OAuth2AuthorizedClient oAuth2Client, @RequestParam(name = "month", required = false) Integer month, @RequestParam(name = "year", required = false) Integer year) throws GeneralSecurityException, IOException, ParseException {
 
-        log.info("Request received for all events");
+        log.info("Request received for all Events");
         return ResponseEntity.ok(eventService.getAllEvents(oAuth2Client, month, year));
+    }
+
+    @GetMapping("/event-by-id/{id}")
+    public ResponseEntity<?> getEventById(@RegisteredOAuth2AuthorizedClient("google") OAuth2AuthorizedClient oAuth2Client, @PathVariable String id) throws GeneralSecurityException, IOException, ParseException {
+
+        log.info("Request received for Event by {}", id);
+        return ResponseEntity.ok(eventService.getEventById(oAuth2Client, id));
     }
 
     @PostMapping("/add-events")

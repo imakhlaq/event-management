@@ -67,6 +67,15 @@ public class EventServiceImpl implements IEventService {
     }
 
     @Override
+    public Event getEventById(OAuth2AuthorizedClient oAuth2User, String id) throws GeneralSecurityException, IOException {
+        Event event = service.getCalendar(oAuth2User)
+            .events()
+            .get(calendarId, id)
+            .execute();
+        return event;
+    }
+
+    @Override
     public Event createEvent(OAuth2AuthorizedClient oAuth2User, EventDTO data) throws GeneralSecurityException, IOException {
 
         if (data.getStartTime().equals(null)) data.setStartTime(LocalDateTime.now());

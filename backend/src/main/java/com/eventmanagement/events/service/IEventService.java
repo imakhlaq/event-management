@@ -13,6 +13,8 @@ import java.util.Map;
 public interface IEventService {
     List<Event> getAllEvents(OAuth2AuthorizedClient oAuth2User, Integer month, Integer Year) throws GeneralSecurityException, IOException, ParseException;
 
+    Event getEventById(OAuth2AuthorizedClient oAuth2User, String id) throws GeneralSecurityException, IOException;
+
     Event createEvent(OAuth2AuthorizedClient oAuth2User, EventDTO data) throws GeneralSecurityException, IOException;
 
     Event updateEvent(OAuth2AuthorizedClient oAuth2User, EventDTO data) throws GeneralSecurityException, IOException;
