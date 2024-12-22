@@ -2,6 +2,7 @@ package com.eventmanagement.googlecalendar;
 
 import com.eventmanagement.auth.repository.IUserRepo;
 import com.eventmanagement.exception.custom.NoRefreshTokenException;
+import com.eventmanagement.utils.TokenUtils;
 import com.google.api.client.auth.oauth2.BearerToken;
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
@@ -24,12 +25,14 @@ public class GoogleCalendarConfig {
 
     private final String APPLICATION_NAME;
     private final IUserRepo userRepo;
+    private final TokenUtils tokenUtils;
     //Global instance of the JSON factory.
     private final JsonFactory JSON_FACTORY = GsonFactory.getDefaultInstance();
 
-    public GoogleCalendarConfig(IUserRepo userRepo, @Value("${app.name}") String appName) {
+    public GoogleCalendarConfig(IUserRepo userRepo, @Value("${app.name}") String appName, TokenUtils tokenUtils) {
         this.userRepo = userRepo;
         this.APPLICATION_NAME = appName;
+        this.tokenUtils = tokenUtils;
     }
 
     private Calendar getCalendar(OAuth2AuthorizedClient client) throws GeneralSecurityException, IOException {

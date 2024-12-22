@@ -8,7 +8,7 @@ import lombok.*;
 
 import java.util.UUID;
 
-@Entity
+@Entity(name = "_user")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
