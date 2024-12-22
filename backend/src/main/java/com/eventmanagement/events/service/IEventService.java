@@ -1,17 +1,21 @@
 package com.eventmanagement.events.service;
 
+import com.eventmanagement.events.DTO.EventDTO;
+import com.google.api.services.calendar.model.Event;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
-import org.springframework.security.oauth2.core.user.OAuth2User;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
+import java.text.ParseException;
+import java.util.List;
+import java.util.Map;
 
 public interface IEventService {
-    Object getAllEvents(OAuth2AuthorizedClient oAuth2User) throws GeneralSecurityException, IOException;
+    List<Event> getAllEvents(OAuth2AuthorizedClient oAuth2User, Integer month, Integer Year) throws GeneralSecurityException, IOException, ParseException;
 
-    void createEvent(OAuth2AuthorizedClient oAuth2User, Object data);
+    Event createEvent(OAuth2AuthorizedClient oAuth2User, EventDTO data) throws GeneralSecurityException, IOException;
 
-    void updateEvent(OAuth2AuthorizedClient oAuth2User, String id, Object data);
+    Event updateEvent(OAuth2AuthorizedClient oAuth2User, EventDTO data) throws GeneralSecurityException, IOException;
 
-    void deleteEvent(OAuth2AuthorizedClient oAuth2User, String id);
+    Map deleteEvent(OAuth2AuthorizedClient oAuth2User, String id) throws GeneralSecurityException, IOException;
 }

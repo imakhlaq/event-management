@@ -29,8 +29,6 @@ public class SecurityConfig {
     private final TokenUtils tokenUtils;
     private final IUserRepo userRepo;
     private final RestClient restClient;
-    @Value("${redirect_url}")
-    String redirectUrl;
 
     public SecurityConfig(OAuth2AuthorizationRequestResolver defaultAuthorizationRequestResolver1, TokenUtils tokenUtils, IUserRepo userRepo, RestClient restClient) {
 
@@ -55,7 +53,7 @@ public class SecurityConfig {
                 }))
             .formLogin(AbstractHttpConfigurer::disable)
             .authorizeHttpRequests(req ->
-                req.requestMatchers("/h2-console/*").permitAll().anyRequest().authenticated())
+                req.requestMatchers("/h2-console/**", "/swagger-ui/**", "/v3/**").permitAll().anyRequest().authenticated())
             .oauth2Login(oauth2 ->
                 oauth2
                     .successHandler(new OAuthLoginSuccessHandler(this.userRepo, this.restClient, this.tokenUtils))
@@ -63,8 +61,6 @@ public class SecurityConfig {
                         auth.authorizationRequestResolver(
                             this.defaultAuthorizationRequestResolver))
             );
-
         return http.build();
     }
-
 }
