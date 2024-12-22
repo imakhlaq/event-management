@@ -1,7 +1,6 @@
 package com.eventmanagement.googlecalendar;
 
 import com.eventmanagement.auth.repository.IUserRepo;
-import com.eventmanagement.exception.custom.NoRefreshTokenException;
 import com.eventmanagement.exception.custom.NoUserFoundException.NoUserFoundException;
 import com.eventmanagement.utils.TokenUtils;
 import com.google.api.client.auth.oauth2.BearerToken;

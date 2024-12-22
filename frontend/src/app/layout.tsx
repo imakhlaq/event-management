@@ -3,6 +3,7 @@ import "./globals.css";
 
 import {Roboto, Poppins} from 'next/font/google';
 import NavBar from "@/app/_components/NavBar";
+import MuiWrapper from "@/utils/MUIWrapper";
 
 const poppins = Poppins({
     weight: ["100", "900"],
@@ -31,8 +32,10 @@ export default function RootLayout({
         <body
             className={`${roboto.variable} ${poppins.variable} antialiased font-sans bg-background bg-gradient-to-r from-slate-50 to-gray-200 `}
         >
-        <NavBar/>
-        {children}
+        <MuiWrapper>
+            <NavBar/>
+            {children}
+        </MuiWrapper>
         </body>
         </html>
     );

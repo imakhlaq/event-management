@@ -38,6 +38,9 @@ public class OAuthLoginSuccessHandler implements AuthenticationSuccessHandler {
         var username = oAuth2Client.getPrincipal().getName();
         var authid = oAuth2Client.getAuthorizedClientRegistrationId();
 
+        var userInDB = this.userRepo.findUserByUsername(username);
+        if (userInDB.isPresent()) response.sendRedirect("http://localhost:3000/dashboard");
+
         log.info("Adding user to db");
         //insert token in the refresh_token into db
         var user = new User();
