@@ -1,15 +1,19 @@
 import type {Metadata} from "next";
-import {Geist, Geist_Mono} from "next/font/google";
 import "./globals.css";
 
-const geistSans = Geist({
-    variable: "--font-geist-sans",
-    subsets: ["latin"],
+import {Roboto, Poppins} from 'next/font/google';
+import NavBar from "@/app/_components/NavBar";
+
+const poppins = Poppins({
+    weight: ["100", "900"],
+    subsets: ['latin'],
+    variable: '--poppins-default'
 });
 
-const geistMono = Geist_Mono({
-    variable: "--font-geist-mono",
-    subsets: ["latin"],
+const roboto = Roboto({
+    weight: ["100", "900"],
+    subsets: ['latin'],
+    variable: '--roboto-default'
 });
 
 export const metadata: Metadata = {
@@ -25,8 +29,9 @@ export default function RootLayout({
     return (
         <html lang="en">
         <body
-            className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+            className={`${roboto.variable} ${poppins.variable} antialiased font-sans bg-background bg-gradient-to-r from-slate-50 to-gray-200 `}
         >
+        <NavBar/>
         {children}
         </body>
         </html>
