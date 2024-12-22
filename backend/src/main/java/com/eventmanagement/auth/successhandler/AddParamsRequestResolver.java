@@ -52,7 +52,7 @@ public class AddParamsRequestResolver implements OAuth2AuthorizationRequestResol
         Map<String, Object> additionalParameters =
             new LinkedHashMap<>(authorizationRequest.getAdditionalParameters());
         additionalParameters.put("access_type", "offline");
-        additionalParameters.put("prompt", "consent");
+        //       additionalParameters.put("prompt", "consent");
 //    additionalParameters.put("prompt", "select_account");
 //    additionalParameters.put("prompt", "login");
 

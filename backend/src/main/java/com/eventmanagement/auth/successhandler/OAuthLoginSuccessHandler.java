@@ -35,18 +35,15 @@ public class OAuthLoginSuccessHandler implements AuthenticationSuccessHandler {
         //TODO get refresh token and store it in db. Refresh token is only available on first signup only
         var oAuth2Client = (OAuth2AuthenticationToken) authentication;
         var email = (String) oAuth2Client.getPrincipal().getAttributes().get("email");
-        var refreshToken = this.tokenUtils.getRefreshToken();
         var username = oAuth2Client.getPrincipal().getName();
         var authid = oAuth2Client.getAuthorizedClientRegistrationId();
 
-        log.info("Got Refresh_Token and stored it in db");
-        log.info("Refresh_Token is {} and user name is {}", refreshToken, username);
+        log.info("Adding user to db");
         //insert token in the refresh_token into db
         var user = new User();
         user.setUsername(username);
         user.setEmail(email);
         user.setAuthId(authid);
-        user.setRefreshToken(refreshToken);
         userRepo.save(user);
 
         response.sendRedirect("http://localhost:3000/dashboard");
