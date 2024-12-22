@@ -1,9 +1,9 @@
 "use client";
 
-import axios from "axios";
 import {useEffect, useState} from "react";
 import {CalenderEvents} from "../../../types";
 import ListEvents from "@/app/dashboard/_componets/ListEvents";
+import {fetchEvents} from "@/utils/fetchingService";
 
 export default function Page() {
 
@@ -11,14 +11,17 @@ export default function Page() {
 
     useEffect(() => {
         (async function () {
-            const data = await axios.get<CalenderEvents>("http://localhost:8080/apiv1/events/get-events", {withCredentials: true})
+            const data = await fetchEvents()
                 .catch(err => console.log(err))
             setData(data?.data)
+
+            console.log(data?.data)
+
         }())
     }, [])
     return (
         <>
-            <div>Dashboard</div>
+            <div>ALL Events</div>
             {data === undefined ? null : <ListEvents calendarEvents={data}/>}
         </>
     );
