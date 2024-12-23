@@ -16,6 +16,7 @@ public class EventDTO {
     private String summary;
     private String description;
     private String location;
+    private String eventType;
     @NotBlank
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime startTime;

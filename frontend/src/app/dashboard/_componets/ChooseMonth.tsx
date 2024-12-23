@@ -105,7 +105,7 @@ export function Combobox({setMonth}: Props) {
                                     value={framework.value}
                                     onSelect={(currentValue) => {
                                         setValue(currentValue === value ? "" : currentValue)
-                                        setMonth(value);
+                                        setMonth(currentValue === value ? "" : currentValue);
                                         setOpen(false)
                                     }}
                                 >

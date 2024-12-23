@@ -41,6 +41,7 @@ public class EventsController {
     public ResponseEntity<?> getAllEvents(@RegisteredOAuth2AuthorizedClient("google") OAuth2AuthorizedClient oAuth2Client, @RequestParam(name = "month", required = false) Integer month, @RequestParam(name = "year", required = false) Integer year) throws GeneralSecurityException, IOException, ParseException {
 
         log.info("Request received for all Events");
+        log.info("Optional Params are Year {} month{}", year, month);
         return ResponseEntity.ok(eventService.getAllEvents(oAuth2Client, month, year));
     }
 
@@ -60,6 +61,7 @@ public class EventsController {
     })
     public ResponseEntity<?> addEvents(@RegisteredOAuth2AuthorizedClient("google") OAuth2AuthorizedClient oAuth2Client, @RequestBody EventDTO eventDTO) throws GeneralSecurityException, IOException {
 
+        log.info("Request received for add event");
         return ResponseEntity.ok(this.eventService.createEvent(oAuth2Client, eventDTO));
     }
 
@@ -72,6 +74,7 @@ public class EventsController {
     })
     public ResponseEntity<?> updateEvents(@RegisteredOAuth2AuthorizedClient("google") OAuth2AuthorizedClient oAuth2Client, @RequestBody EventDTO eventUpdateDTO) throws GeneralSecurityException, IOException {
 
+        log.info("Request received update event");
         return ResponseEntity.ok(this.eventService.updateEvent(oAuth2Client, eventUpdateDTO));
     }
 
@@ -84,6 +87,7 @@ public class EventsController {
     })
     public ResponseEntity<?> deleteEvents(@RegisteredOAuth2AuthorizedClient("google") OAuth2AuthorizedClient oAuth2Client, @PathVariable String id) throws GeneralSecurityException, IOException {
 
+        log.info("Request received delete event");
         return ResponseEntity.ok(this.eventService.deleteEvent(oAuth2Client, id));
     }
 }

@@ -113,3 +113,14 @@ export interface EntryPoint {
     pin?: string
     regionCode?: string
 }
+
+export type EventData = {
+    id?: string,
+    summary?: string,
+    description?: string,
+    location?: string,
+    eventType?: string,
+    startTime?: string, //"yyyy-MM-dd'T'HH:mm:ss"
+    endTime?: string,
+
+}

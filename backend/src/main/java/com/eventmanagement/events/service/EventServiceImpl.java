@@ -83,7 +83,7 @@ public class EventServiceImpl implements IEventService {
 
         var time = this.calcStartAndEndTime(data.getStartTime(), data.getEndTime());
 
-        Event event = new Event();
+        Event event = this.getEventById(oAuth2User, data.getId());
         event.setDescription(data.getDescription());
         event.setSummary(data.getSummary());
         event.setLocation(data.getLocation());
@@ -106,6 +106,7 @@ public class EventServiceImpl implements IEventService {
         event.setSummary(data.getSummary());
         event.setDescription(data.getDescription());
         event.setLocation(data.getLocation());
+        event.setEventType(data.getEventType());
         event.setStart(time.get("eventStartTime"));
         event.setEnd(time.get("eventEndTime"));
 

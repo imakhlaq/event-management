@@ -39,7 +39,7 @@ public class SecurityConfig {
                 corsConfig.configurationSource(req -> {
                     var corsConfiguration = new CorsConfiguration();
                     corsConfiguration.setAllowedHeaders(List.of("Authorization", "Cache-Control", "Content-Type"));
-                    corsConfiguration.setAllowedOrigins(List.of("http://localhost:3000", "http://127.0.0.1:3000", "http://localhost:3000", "https://accounts.google.com"));
+                    corsConfiguration.setAllowedOrigins(List.of("http://localhost:3000", "http://127.0.0.1:3000", "http://localhost:3000", "https://accounts.google.com", "https://accounts.google.com/", "https://accounts.google.com/**"));
                     corsConfiguration.setAllowedMethods(List.of("GET", "POST", "PATCH", "DELETE"));
                     corsConfiguration.setAllowCredentials(true);
                     return corsConfiguration;

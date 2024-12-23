@@ -5,6 +5,8 @@ import {CalenderEvents} from "../../../types";
 import ListEvents from "@/app/dashboard/_componets/ListEvents";
 import {fetchEvents} from "@/utils/fetchingService";
 import {Combobox} from "@/app/dashboard/_componets/ChooseMonth";
+import {Button} from "@/components/ui/button";
+import Link from "next/link";
 
 export default function Page() {
 
@@ -19,11 +21,14 @@ export default function Page() {
         }())
     }, [month]);
 
+    console.log(`Month selected ${month}`)
+
     return (
         <div className="container mx-auto w-screen flex justify-center flex-col">
             <div className="flex items-center gap-6">
                 <div className="text-3xl p-3">ALL Events</div>
                 <Combobox setMonth={setMonth}/>
+                <Button><Link href={"/create-event"}>Create Event</Link></Button>
             </div>
             {data === undefined ? null : <ListEvents calendarEvents={data}/>}
         </div>
