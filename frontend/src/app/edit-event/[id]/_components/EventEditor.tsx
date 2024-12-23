@@ -7,6 +7,8 @@ import {Button} from "@/components/ui/button";
 import {FormEvent, useEffect, useState} from "react";
 import dayjs, {Dayjs} from "dayjs";
 import {createEvent, updateEvent} from "@/utils/fetchingService";
+import {useToast} from "@/hooks/use-toast";
+import {useRouter} from "next/navigation";
 
 type Props = { event?: CalenderEvent };
 export default function EventEditor({event}: Props) {
@@ -15,6 +17,8 @@ export default function EventEditor({event}: Props) {
     const [eventEndTime, setEventEndTime] = useState<Dayjs | null>(null)
     const [summary, setSummary] = useState<string | undefined>(undefined)
     const [description, setDescription] = useState<string | undefined>(undefined)
+    const {toast} = useToast()
+    const router = useRouter();
 
     useEffect(() => {
         setDescription(event?.description);
@@ -47,13 +51,42 @@ export default function EventEditor({event}: Props) {
             //handle Update
             data.id = event.id;
             data.location = "allahabad";
-            const res = await updateEvent(data);
-            console.log(res.data)
+            try {
+                const res = await updateEvent(data)
+                toast({
+                    title: "Update Successful",
+                    description: res.data.summary
+                })
+            } catch (e) {
+                toast({
+                    title: "Update Failed",
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                    // @ts-expect-error
+                    description: e.message
+                });
+            } finally {
+                router.push("/dashboard")
+            }
             return
         }
-        //handle create
-        const res = await createEvent(data)
-        console.log(res.data)
+        try {
+            //handle create
+            const res = await createEvent(data)
+            toast({
+                title: "Created Successful",
+                description: res.data.summary
+            })
+
+        } catch (e) {
+            toast({
+                title: "Creation Failed",
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-expect-error
+                description: e.message
+            });
+        } finally {
+            router.push("/dashboard")
+        }
         return
     }
 

@@ -13,7 +13,8 @@ export default function Page({params}: Props) {
 
     useEffect(() => {
         (async function () {
-            const data = await fetchEventById((await params).id);
+            const data = await fetchEventById((await params).id)
+                .catch(err => console.log(err));
             setEventDetails(data?.data);
         })()
     }, [])

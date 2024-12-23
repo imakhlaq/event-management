@@ -7,13 +7,33 @@ import Link from "next/link";
 import {Button} from "@/components/ui/button";
 import {MdDeleteForever} from "react-icons/md";
 import {deleteEventById} from "@/utils/fetchingService";
+import {useToast} from "@/hooks/use-toast";
+import {useRouter} from "next/navigation";
 
 type Props = { calendarEvent: CalenderEvent };
 
 export default function OneEvent({calendarEvent}: Props) {
+
+    const {toast} = useToast()
+    const router = useRouter()
+
     async function deleteHandler() {
-        const response = await deleteEventById(calendarEvent.id);
-        console.log(response.data);
+        try {
+            const response = await deleteEventById(calendarEvent.id);
+            toast({
+                title: "Event Deleted",
+                description: response.data.message
+            })
+        } catch (e) {
+            toast({
+                title: "Update Failed",
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-expect-error
+                description: e.message
+            });
+        } finally {
+            router.push("/dashboard")
+        }
     }
 
     const startTime =
