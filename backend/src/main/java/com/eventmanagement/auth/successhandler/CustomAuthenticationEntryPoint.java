@@ -15,13 +15,16 @@ import java.util.Map;
 @Slf4j
 public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
-    @Value("${login-url}")
-    private String logInURl;
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    final private String logInURl;
+    final private ObjectMapper objectMapper = new ObjectMapper();
+
+    public CustomAuthenticationEntryPoint(String logInURl) {
+        this.logInURl = logInURl;
+    }
 
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
-        
+
         log.error("Access without authentication");
 
         // Set response headers

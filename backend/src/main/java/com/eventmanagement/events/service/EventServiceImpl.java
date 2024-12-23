@@ -145,20 +145,16 @@ public class EventServiceImpl implements IEventService {
     public WeekSummaryResponse thisWeekSummary(OAuth2AuthorizedClient oAuth2User) throws GeneralSecurityException, IOException {
 
         var today = LocalDate.now();
-
         // Calculate the start and end of the week
         var startOfWeek = today.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY)).atStartOfDay();
         var endOfWeek = today.with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY)).atTime(23, 59, 59);
 
-        // Convert to ZonedDateTime and then to DateTime for the Google Calendar API
-        var zoneId = ZoneId.systemDefault();
-        var startTime = new DateTime(startOfWeek.atZone(zoneId).toInstant().toEpochMilli());
-        var endTime = new DateTime(endOfWeek.atZone(zoneId).toInstant().toEpochMilli());
+        var time = this.calcStartAndEndTime(startOfWeek, endOfWeek);
 
         var events = this.service.getCalendar(oAuth2User)
             .events().list(calendarId)
-            .setTimeMin(startTime)
-            .setTimeMax(endTime)
+            .setTimeMin(time.get("eventStartTime").getDateTime())
+            .setTimeMax(time.get("eventEndTime").getDateTime())
             .setOrderBy("startTime")
             .setSingleEvents(true)
             .execute();
@@ -170,9 +166,6 @@ public class EventServiceImpl implements IEventService {
             .forEach(event -> {
                 var eventStartTime = event.getStart();
                 var eventEndTime = event.getEnd();
-
-                if (startTime.equals(null)) return;
-                if (eventEndTime.equals(null)) return;
 
                 var time1 = eventStartTime.getDateTime();
                 var time2 = eventEndTime.getDateTime();

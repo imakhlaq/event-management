@@ -2,6 +2,7 @@ package com.eventmanagement.auth.config;
 
 import com.eventmanagement.repository.IUserRepo;
 import com.eventmanagement.auth.successhandler.*;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -22,6 +23,10 @@ public class SecurityConfig {
     private final IUserRepo userRepo;
     private final RestClient restClient;
     private final CustomOAuth2UserService oAuth2UserService;
+    @Value("${login-url}")
+    private String logInURl;
+    @Value("${redirect-url-after-successful-login}")
+    private String redirectUrlAfterSuccessfulLogin;
 
     public SecurityConfig(IUserRepo userRepo, RestClient restClient, CustomOAuth2UserService oAuth2UserService) {
 
@@ -52,11 +57,11 @@ public class SecurityConfig {
                     .userInfoEndpoint(userInfo -> userInfo
                         .userService(oAuth2UserService)
                     )
-                    .successHandler(new OAuthLoginSuccessHandler(this.userRepo, this.restClient))
+                    .successHandler(new OAuthLoginSuccessHandler(this.userRepo, this.redirectUrlAfterSuccessfulLogin))
             ).exceptionHandling(exception ->
                 exception
-                    .authenticationEntryPoint(new CustomAuthenticationEntryPoint())
-                    .accessDeniedHandler(new CustomAccessDeniedHandler())
+                    .authenticationEntryPoint(new CustomAuthenticationEntryPoint(this.logInURl))
+                    .accessDeniedHandler(new CustomAccessDeniedHandler(this.logInURl))
             );
 
         return http.build();

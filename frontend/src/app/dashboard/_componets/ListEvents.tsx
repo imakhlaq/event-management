@@ -7,17 +7,17 @@ import {
     TableHead,
     TableHeader,
     TableRow,
-} from "@/components/ui/table"
+} from "@/components/ui/table";
 
 type Props = {
-    calendarEvents: CalenderEvents,
-    summary?: string
+    calendarEvents: CalenderEvents;
+    summary?: string;
 };
 export default function ListEvents({calendarEvents, summary}: Props) {
-
-    const content = summary === undefined ? "A list of your Events." : "This week summary";
+    const content =
+        summary === undefined ? "A list of your Events." : "This week summary";
     let hours;
-    let remainingMinutes
+    let remainingMinutes;
     if (summary) {
         const minutes = +summary;
         hours = Math.floor(minutes / 60); // Whole hours
@@ -29,9 +29,14 @@ export default function ListEvents({calendarEvents, summary}: Props) {
             <TableCaption>
                 <div className="flex justify-around mt-9 text-xl">
                     <div>{content}</div>
-                    {summary &&
-                        <div><p><span>{hours}H</span> <span>{remainingMinutes && remainingMinutes.toFixed(0)}M</span>
-                        </p></div>}
+                    {summary && (
+                        <div>
+                            <p>
+                                <span>{hours}H</span>{" "}
+                                <span>{remainingMinutes && remainingMinutes.toFixed(0)}M</span>
+                            </p>
+                        </div>
+                    )}
                 </div>
             </TableCaption>
 
@@ -44,11 +49,10 @@ export default function ListEvents({calendarEvents, summary}: Props) {
                 </TableRow>
             </TableHeader>
             <TableBody>
-                {calendarEvents.map(event => (
+                {calendarEvents.map((event) => (
                     <OneEvent key={event.id} calendarEvent={event}/>
                 ))}
             </TableBody>
         </Table>
-
     );
-};
+}
