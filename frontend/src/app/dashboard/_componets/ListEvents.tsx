@@ -16,11 +16,25 @@ type Props = {
 export default function ListEvents({calendarEvents, summary}: Props) {
 
     const content = summary === undefined ? "A list of your Events." : "This week summary";
+    let hours;
+    let remainingMinutes
+    if (summary) {
+        const minutes = +summary;
+        hours = Math.floor(minutes / 60); // Whole hours
+        remainingMinutes = minutes % 60; // Remaining minutes
+    }
 
     return (
-        <Table>
-            <TableCaption>{content}</TableCaption>
-            {summary && <TableCaption>{summary}</TableCaption>}
+        <Table className="mt-20">
+            <TableCaption>
+                <div className="flex justify-around mt-9 text-xl">
+                    <div>{content}</div>
+                    {summary &&
+                        <div><p><span>{hours}H</span> <span>{remainingMinutes && remainingMinutes.toFixed(0)}M</span>
+                        </p></div>}
+                </div>
+            </TableCaption>
+
             <TableHeader>
                 <TableRow>
                     <TableHead className="w-[15rem]">Summary</TableHead>
