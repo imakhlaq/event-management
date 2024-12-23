@@ -4,7 +4,6 @@ import {
     Table,
     TableBody,
     TableCaption,
-    TableCell,
     TableHead,
     TableHeader,
     TableRow,
@@ -22,7 +21,7 @@ export default function ListEvents({calendarEvents}: Props) {
                     <TableHead className="w-[15rem]">Summary</TableHead>
                     <TableHead>Created At</TableHead>
                     <TableHead>Ended At</TableHead>
-                    <TableHead className="text-right">Amount</TableHead>
+                    <TableHead className="text-right">Delete</TableHead>
                 </TableRow>
             </TableHeader>
             <TableBody>

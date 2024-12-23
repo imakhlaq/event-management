@@ -124,3 +124,6 @@ export type EventData = {
     endTime?: string,
 
 }
+export type DeleteEventRes = {
+    message: string,
+}
