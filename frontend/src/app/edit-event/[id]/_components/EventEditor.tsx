@@ -37,6 +37,7 @@ export default function EventEditor({event}: Props) {
         const data: EventData = {
             summary,
             description,
+            location: event?.location,
             eventType: event?.eventType,
             startTime: eventStartTime?.format("YYYY-MM-DDTHH:mm:ss"),
             endTime: eventEndTime?.format("YYYY-MM-DDTHH:mm:ss")
@@ -45,6 +46,7 @@ export default function EventEditor({event}: Props) {
         if (event?.id) {
             //handle Update
             data.id = event.id;
+            data.location = "allahabad";
             const res = await updateEvent(data);
             console.log(res.data)
             return

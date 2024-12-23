@@ -10,12 +10,17 @@ import {
 } from "@/components/ui/table"
 
 type Props = {
-    calendarEvents: CalenderEvents
+    calendarEvents: CalenderEvents,
+    summary?: string
 };
-export default function ListEvents({calendarEvents}: Props) {
+export default function ListEvents({calendarEvents, summary}: Props) {
+
+    const content = summary === undefined ? "A list of your Events." : "This week summary";
+
     return (
         <Table>
-            <TableCaption>A list of your Events.</TableCaption>
+            <TableCaption>{content}</TableCaption>
+            {summary && <TableCaption>{summary}</TableCaption>}
             <TableHeader>
                 <TableRow>
                     <TableHead className="w-[15rem]">Summary</TableHead>

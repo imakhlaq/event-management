@@ -85,7 +85,7 @@ public class EventServiceImpl implements IEventService {
 
         var time = this.calcStartAndEndTime(data.getStartTime(), data.getEndTime());
 
-        var event = this.getEventById(oAuth2User, data.getId());
+        var event = new Event();
         event.setDescription(data.getDescription());
         event.setSummary(data.getSummary());
         event.setLocation(data.getLocation());
@@ -142,19 +142,17 @@ public class EventServiceImpl implements IEventService {
 
     @Override
     public WeekSummaryResponse thisWeekSummary(OAuth2AuthorizedClient oAuth2User) throws GeneralSecurityException, IOException {
+        // Get today's date
         var today = LocalDate.now();
 
-        // Get the start and end of the week
-        var startOfWeek = today.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
-        var endOfWeek = today.with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY));
+        // Calculate the start and end of the week
+        var startOfWeek = today.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY)).atStartOfDay();
+        var endOfWeek = today.with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY)).atTime(23, 59, 59);
 
-        // Convert to ZonedDateTime
-        var startOfWeekZoned = startOfWeek.atStartOfDay(ZoneId.systemDefault());
-        var endOfWeekZoned = endOfWeek.atTime(23, 59, 59).atZone(ZoneId.systemDefault());
-
-        // Convert to ZonedDateTime
-        var startTime = new DateTime(startOfWeekZoned.toEpochSecond());
-        var endTime = new DateTime(endOfWeekZoned.toEpochSecond());
+        // Convert to ZonedDateTime and then to DateTime for the Google Calendar API
+        var zoneId = ZoneId.systemDefault();
+        var startTime = new DateTime(startOfWeek.atZone(zoneId).toInstant().toEpochMilli());
+        var endTime = new DateTime(endOfWeek.atZone(zoneId).toInstant().toEpochMilli());
 
         var events = this.service.getCalendar(oAuth2User)
             .events().list(calendarId)
@@ -172,9 +170,17 @@ public class EventServiceImpl implements IEventService {
                 var eventStartTime = event.getStart();
                 var eventEndTime = event.getEnd();
 
+                if (startTime.equals(null)) return;
+                if (eventEndTime.equals(null)) return;
+
+                var time1 = eventStartTime.getDateTime();
+                var time2 = eventEndTime.getDateTime();
+
+                if (time1 == null && time2 == null) return;
+
                 var startInstant = Instant.ofEpochMilli(eventStartTime.getDateTime().getValue());
                 var endInstant = Instant.ofEpochMilli(eventEndTime.getDateTime().getValue());
-                totalNumberOfHours.updateAndGet(v -> v + Duration.between(startInstant, endInstant).toHours());
+                totalNumberOfHours.updateAndGet(v -> v + Duration.between(startInstant, endInstant).toMinutes());
             });
 
         var weekSummary = new WeekSummaryResponse();

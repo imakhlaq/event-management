@@ -17,18 +17,20 @@ export default function OneEvent({calendarEvent}: Props) {
         console.log(response.data)
     }
 
+    const startTime = calendarEvent.start.dateTime !== undefined ? dataTimeFormatter(calendarEvent.start.dateTime.value) : ""
+    const endTime = calendarEvent.start.dateTime !== undefined ? dataTimeFormatter(calendarEvent.end.dateTime.value) : ""
+
     return (
         <TableRow>
-
             <TableCell className="font-medium"> <Link
                 href={`/edit-event/${calendarEvent.id}`}>{calendarEvent.summary} </Link>
             </TableCell>
-
-            <TableCell>{dataTimeFormatter(calendarEvent.start.dateTime.value)}</TableCell>
-            <TableCell>{dataTimeFormatter(calendarEvent.end.dateTime.value)}</TableCell>
-            <TableCell className="text-right"><Button className={"bg-red-400"}
-                                                      onClick={deleteHandler}><MdDeleteForever/>
-            </Button></TableCell>
+            <TableCell>{startTime}</TableCell>
+            <TableCell>{endTime}</TableCell>
+            <TableCell className="text-right"><Button className={"bg-red-400"} onClick={deleteHandler}>
+                <MdDeleteForever/>
+            </Button>
+            </TableCell>
         </TableRow>
     )
 };

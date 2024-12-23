@@ -1,3 +1,8 @@
+export type WeekSummary = {
+    allEventsThisWeek: CalenderEvents,
+    totalNumberOfHours: string
+}
+
 export type CalenderEvents = CalenderEvent[]
 
 export type CalenderEvent = {

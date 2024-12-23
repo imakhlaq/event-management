@@ -1,5 +1,5 @@
 import {service} from "@/utils/service";
-import {CalenderEvent, CalenderEvents, DeleteEventRes, EventData} from "../../types";
+import {CalenderEvent, CalenderEvents, DeleteEventRes, EventData, WeekSummary} from "../../types";
 
 const url = process.env.NEXT_PUBLIC_BASEURL
 
@@ -33,4 +33,10 @@ export async function deleteEventById(id: string) {
 
     const deleteEventByIDURI = url + `/apiv1/events/delete/${id}`
     return await service.delete<DeleteEventRes>(deleteEventByIDURI);
+}
+
+export async function fetchThisWeekSummary() {
+
+    const weekEventSummaryURI = url + `/apiv1/events/week-summary`
+    return await service.get<WeekSummary>(weekEventSummaryURI);
 }

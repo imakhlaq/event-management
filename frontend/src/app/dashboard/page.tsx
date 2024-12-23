@@ -29,6 +29,7 @@ export default function Page() {
                 <div className="text-3xl p-3">ALL Events</div>
                 <Combobox setMonth={setMonth}/>
                 <Button><Link href={"/create-event"}>Create Event</Link></Button>
+                <Button><Link href={"/week-summary"}>Week Summary</Link></Button>
             </div>
             {data === undefined ? null : <ListEvents calendarEvents={data}/>}
         </div>
