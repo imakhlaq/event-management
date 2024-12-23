@@ -8,13 +8,12 @@ type Props = {
     time?: dayjs.Dayjs | null
 };
 export default function MDateTimePicker({label, setTime, time}: Props) {
-    let value;
+
     return (
         <DateTimePicker
             label={label}
-            value={value}
+            value={dayjs(time?.format("YYYY-MM-DDTHH:mm"))}
             onChange={(newValue) => setTime?.(newValue)}
-            defaultValue={dayjs(time?.format("YYYY-MM-DDTHH:mm"))}
         />
     );
 };

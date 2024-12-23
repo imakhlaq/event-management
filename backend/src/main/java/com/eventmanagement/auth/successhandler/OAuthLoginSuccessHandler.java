@@ -2,7 +2,6 @@ package com.eventmanagement.auth.successhandler;
 
 import com.eventmanagement.auth.repository.IUserRepo;
 import com.eventmanagement.models.User;
-import com.eventmanagement.utils.TokenUtils;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -21,12 +20,10 @@ public class OAuthLoginSuccessHandler implements AuthenticationSuccessHandler {
 
     final private IUserRepo userRepo;
     final private RestClient restClient;
-    final private TokenUtils tokenUtils;
 
-    public OAuthLoginSuccessHandler(IUserRepo userRepo, RestClient restClient, TokenUtils tokenUtils) {
+    public OAuthLoginSuccessHandler(IUserRepo userRepo, RestClient restClient) {
         this.userRepo = userRepo;
         this.restClient = restClient;
-        this.tokenUtils = tokenUtils;
     }
 
     @Override

@@ -2,7 +2,6 @@ package com.eventmanagement.googlecalendar;
 
 import com.eventmanagement.auth.repository.IUserRepo;
 import com.eventmanagement.exception.custom.NoUserFoundException.NoUserFoundException;
-import com.eventmanagement.utils.TokenUtils;
 import com.google.api.client.auth.oauth2.BearerToken;
 import com.google.api.client.auth.oauth2.ClientParametersAuthentication;
 import com.google.api.client.auth.oauth2.Credential;
@@ -29,18 +28,18 @@ public class GoogleCalendarConfig {
 
     private final String APPLICATION_NAME;
     private final IUserRepo userRepo;
-    private final TokenUtils tokenUtils;
     //Global instance of the JSON factory.
     private final JsonFactory JSON_FACTORY = GsonFactory.getDefaultInstance();
     @Value("${client-id}")
     private String clientId;
     @Value("${client-secret}")
     private String clientSecret;
+    @Value("${refresh-token}")
+    private String refreshToken;
 
-    public GoogleCalendarConfig(IUserRepo userRepo, @Value("${app.name}") String appName, TokenUtils tokenUtils) {
+    public GoogleCalendarConfig(IUserRepo userRepo, @Value("${app.name}") String appName) {
         this.userRepo = userRepo;
         this.APPLICATION_NAME = appName;
-        this.tokenUtils = tokenUtils;
     }
 
     public Calendar getCalendar(OAuth2AuthorizedClient client) throws GeneralSecurityException, IOException {
@@ -50,14 +49,13 @@ public class GoogleCalendarConfig {
         saveRefreshTokenOnFirstRequest(client);
 
         var user = this.userRepo.findUserByUsername(client.getPrincipalName());
-        if (!user.isPresent()) throw new NoUserFoundException("/", HttpStatus.BAD_REQUEST, "User Doesn't exists in DB");
+        if (!user.isPresent()) throw new NoUserFoundException(HttpStatus.BAD_REQUEST, "User Doesn't exists in DB");
 
         //NOTE when you will use a db that persist the toke it will be available
 //        var refreshToken = user.get().getRefreshToken();
 //        if (refreshToken.equals(null))
-//            throw new NoRefreshTokenException("/", HttpStatus.BAD_REQUEST, "Refresh Token for this user is not available");
+//            throw new NoRefreshTokenException(HttpStatus.BAD_REQUEST, "Refresh Token for this user is not available");
 
-        var refreshToken = "1//0guee7PqCbKdbCgYIARAAGBASNwF-L9IrEenUx_t5CT7LnqQT1IyYNRRUxOREUeHpFUipz4Nyyi0AGcqWFE_WvEpGtKHmq3JFBQI";
         // Build the Credential with the Builder
         Credential builder = new Credential.Builder(BearerToken.authorizationHeaderAccessMethod())
             .setJsonFactory(JSON_FACTORY)
@@ -66,7 +64,7 @@ public class GoogleCalendarConfig {
             .setClientAuthentication(new ClientParametersAuthentication(clientId, clientSecret))
             .build()
             .setAccessToken(client.getAccessToken().getTokenValue())
-            .setRefreshToken(refreshToken);
+            .setRefreshToken(this.refreshToken);
 
         log.info("Connecting to the Google Calender Server");
 
