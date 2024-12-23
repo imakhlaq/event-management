@@ -1,14 +1,13 @@
 package com.eventmanagement.auth.config;
 
 import com.eventmanagement.auth.repository.IUserRepo;
-import com.eventmanagement.auth.successhandler.OAuthLoginSuccessHandler;
+import com.eventmanagement.auth.successhandler.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequestResolver;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.cors.CorsConfiguration;
@@ -20,15 +19,15 @@ import java.util.List;
 @Configuration
 public class SecurityConfig {
 
-    private final OAuth2AuthorizationRequestResolver defaultAuthorizationRequestResolver;
     private final IUserRepo userRepo;
     private final RestClient restClient;
+    private final CustomOAuth2UserService oAuth2UserService;
 
-    public SecurityConfig(OAuth2AuthorizationRequestResolver defaultAuthorizationRequestResolver1, IUserRepo userRepo, RestClient restClient) {
+    public SecurityConfig(IUserRepo userRepo, RestClient restClient, CustomOAuth2UserService oAuth2UserService) {
 
-        this.defaultAuthorizationRequestResolver = defaultAuthorizationRequestResolver1;
         this.userRepo = userRepo;
         this.restClient = restClient;
+        this.oAuth2UserService = oAuth2UserService;
     }
 
     @Bean
@@ -50,11 +49,16 @@ public class SecurityConfig {
                     permitAll().anyRequest().authenticated())
             .oauth2Login(oauth2 ->
                 oauth2
+                    .userInfoEndpoint(userInfo -> userInfo
+                        .userService(oAuth2UserService)
+                    )
                     .successHandler(new OAuthLoginSuccessHandler(this.userRepo, this.restClient))
-                    .authorizationEndpoint(auth ->
-                        auth.authorizationRequestResolver(
-                            this.defaultAuthorizationRequestResolver))
+            ).exceptionHandling(exception ->
+                exception
+                    .authenticationEntryPoint(new CustomAuthenticationEntryPoint())
+                    .accessDeniedHandler(new CustomAccessDeniedHandler())
             );
+
         return http.build();
     }
 }

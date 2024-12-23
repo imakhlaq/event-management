@@ -117,13 +117,13 @@ Before running the application, make sure you have the following installed:
   - #### 3. Build the Spring Boot project:
 
   ```
-  mvn clean install
+  gradle install
   ```
 
   - #### 4. Run the Spring Boot application:
 
   ```
-  mvn spring-boot:run
+  ./gradlew bootRun
   ```
 
   The backend will be available at http://localhost:8080.
@@ -176,7 +176,7 @@ To deploy this application, you can follow these steps:
 2.  Build the Spring Boot backend as a JAR file with:
 
     ```
-    mvn clean package
+    ./gradlew build
     ```
 
 3.  Deploy both parts to your desired cloud service (e.g., AWS, Heroku, Google Cloud, etc.).
