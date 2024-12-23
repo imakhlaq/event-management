@@ -46,7 +46,8 @@ public class SecurityConfig {
                 }))
             .formLogin(AbstractHttpConfigurer::disable)
             .authorizeHttpRequests(req ->
-                req.requestMatchers("/h2-console/**", "/swagger-ui/**", "/v3/**").permitAll().anyRequest().authenticated())
+                req.requestMatchers("/h2-console/**", "/swagger-ui/**", "/v3/**", "/oauth2/callback").
+                    permitAll().anyRequest().authenticated())
             .oauth2Login(oauth2 ->
                 oauth2
                     .successHandler(new OAuthLoginSuccessHandler(this.userRepo, this.restClient))
