@@ -90,4 +90,12 @@ public class EventsController {
         log.info("Request received delete event");
         return ResponseEntity.ok(this.eventService.deleteEvent(oAuth2Client, id));
     }
+
+    @GetMapping("/week-summary")
+    public ResponseEntity<?> thisWeekSummary(@RegisteredOAuth2AuthorizedClient("google") OAuth2AuthorizedClient oAuth2Client) throws GeneralSecurityException, IOException, ParseException {
+
+        log.info("Request received for this week summary");
+        return ResponseEntity.ok(eventService.thisWeekSummary(oAuth2Client));
+    }
+
 }

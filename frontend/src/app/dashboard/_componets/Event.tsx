@@ -19,9 +19,11 @@ export default function OneEvent({calendarEvent}: Props) {
 
     return (
         <TableRow>
-            <Link href={`/edit-event/${calendarEvent.id}`}>
-                <TableCell className="font-medium">{calendarEvent.summary}</TableCell>
-            </Link>
+
+            <TableCell className="font-medium"> <Link
+                href={`/edit-event/${calendarEvent.id}`}>{calendarEvent.summary} </Link>
+            </TableCell>
+
             <TableCell>{dataTimeFormatter(calendarEvent.start.dateTime.value)}</TableCell>
             <TableCell>{dataTimeFormatter(calendarEvent.end.dateTime.value)}</TableCell>
             <TableCell className="text-right"><Button className={"bg-red-400"}

@@ -2,6 +2,7 @@ package com.eventmanagement.events.service;
 
 import com.eventmanagement.events.DTO.EventDTO;
 import com.eventmanagement.googlecalendar.GoogleCalendarConfig;
+import com.eventmanagement.response.events.WeekSummaryResponse;
 import com.eventmanagement.utils.DateTimeUtils;
 import com.google.api.client.util.DateTime;
 import com.google.api.services.calendar.model.Event;
@@ -13,11 +14,12 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
-import java.time.LocalDateTime;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAdjusters;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 
 @Service
 @AllArgsConstructor
@@ -33,20 +35,20 @@ public class EventServiceImpl implements IEventService {
         if (month != null && month <= 12) {
 
             // Define a DateTimeFormatter for the output format
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssXXX");
+            var formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssXXX");
 
             // Start of the month
-            LocalDateTime startOfMonth = LocalDateTime.of(year, month, 1, 0, 0);
+            var startOfMonth = LocalDateTime.of(year, month, 1, 0, 0);
 
             // End of the month (last day of the month, 23:59:59)
-            LocalDateTime endOfMonth = startOfMonth.with(TemporalAdjusters.lastDayOfMonth()).withHour(23).withMinute(59).withSecond(59);
+            var endOfMonth = startOfMonth.with(TemporalAdjusters.lastDayOfMonth()).withHour(23).withMinute(59).withSecond(59);
 
             // Convert to Google's DateTime format
-            DateTime startTime = new DateTime(DateTimeUtils.getDateTimeInEpochMilli(startOfMonth));
-            DateTime endTime = new DateTime(DateTimeUtils.getDateTimeInEpochMilli(endOfMonth));
+            var startTime = new DateTime(DateTimeUtils.getDateTimeInEpochMilli(startOfMonth));
+            var endTime = new DateTime(DateTimeUtils.getDateTimeInEpochMilli(endOfMonth));
 
             // Fetch events for the month
-            Events events = this.service.getCalendar(oAuth2User).events().list(calendarId)
+            var events = this.service.getCalendar(oAuth2User).events().list(calendarId)
                 .setTimeMin(startTime)
                 .setTimeMax(endTime)
                 .setOrderBy("startTime")
@@ -68,7 +70,7 @@ public class EventServiceImpl implements IEventService {
 
     @Override
     public Event getEventById(OAuth2AuthorizedClient oAuth2User, String id) throws GeneralSecurityException, IOException {
-        Event event = service.getCalendar(oAuth2User)
+        var event = service.getCalendar(oAuth2User)
             .events()
             .get(calendarId, id)
             .execute();
@@ -83,7 +85,7 @@ public class EventServiceImpl implements IEventService {
 
         var time = this.calcStartAndEndTime(data.getStartTime(), data.getEndTime());
 
-        Event event = this.getEventById(oAuth2User, data.getId());
+        var event = this.getEventById(oAuth2User, data.getId());
         event.setDescription(data.getDescription());
         event.setSummary(data.getSummary());
         event.setLocation(data.getLocation());
@@ -102,7 +104,7 @@ public class EventServiceImpl implements IEventService {
 
         var time = this.calcStartAndEndTime(data.getStartTime(), data.getEndTime());
 
-        Event event = new Event();
+        var event = new Event();
         event.setSummary(data.getSummary());
         event.setDescription(data.getDescription());
         event.setLocation(data.getLocation());
@@ -136,5 +138,49 @@ public class EventServiceImpl implements IEventService {
         this.service.getCalendar(oAuth2User).events().delete(calendarId, id).execute();
         var message = "Event with id " + id + " delete";
         return Map.of("Message", message);
+    }
+
+    @Override
+    public WeekSummaryResponse thisWeekSummary(OAuth2AuthorizedClient oAuth2User) throws GeneralSecurityException, IOException {
+        var today = LocalDate.now();
+
+        // Get the start and end of the week
+        var startOfWeek = today.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
+        var endOfWeek = today.with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY));
+
+        // Convert to ZonedDateTime
+        var startOfWeekZoned = startOfWeek.atStartOfDay(ZoneId.systemDefault());
+        var endOfWeekZoned = endOfWeek.atTime(23, 59, 59).atZone(ZoneId.systemDefault());
+
+        // Convert to ZonedDateTime
+        var startTime = new DateTime(startOfWeekZoned.toEpochSecond());
+        var endTime = new DateTime(endOfWeekZoned.toEpochSecond());
+
+        var events = this.service.getCalendar(oAuth2User)
+            .events().list(calendarId)
+            .setTimeMin(startTime)
+            .setTimeMax(endTime)
+            .setOrderBy("startTime")
+            .setSingleEvents(true)
+            .execute();
+
+        AtomicReference<Long> totalNumberOfHours = new AtomicReference<>(0L);
+
+        events.getItems()
+            .stream()
+            .forEach(event -> {
+                var eventStartTime = event.getStart();
+                var eventEndTime = event.getEnd();
+
+                var startInstant = Instant.ofEpochMilli(eventStartTime.getDateTime().getValue());
+                var endInstant = Instant.ofEpochMilli(eventEndTime.getDateTime().getValue());
+                totalNumberOfHours.updateAndGet(v -> v + Duration.between(startInstant, endInstant).toHours());
+            });
+
+        var weekSummary = new WeekSummaryResponse();
+        weekSummary.setAllEventsThisWeek(events.getItems());
+        weekSummary.setTotalNumberOfHours(totalNumberOfHours);
+
+        return weekSummary;
     }
 }
