@@ -13,16 +13,17 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) {
+        
         // Fetch user info from the provider
         OAuth2User oAuth2User = super.loadUser(userRequest);
 
-        // Custom logic to map provider user info to your app's user model
+        //create and store user in DB
         String email = oAuth2User.getAttribute("email");
         String name = oAuth2User.getAttribute("name");
 
-        // Example: Return a custom user representation
+        //you can customize user Oauth2 use to have roles and other fields
         return new DefaultOAuth2User(
-            Collections.singleton(() -> "ROLE_USER"), // Roles/authorities
+            Collections.singleton(() -> "ROLE_USER"), // Roles
             oAuth2User.getAttributes(), // User attributes from provider
             name // Identifier attribute key
         );

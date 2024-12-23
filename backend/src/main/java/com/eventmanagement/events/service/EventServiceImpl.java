@@ -70,6 +70,7 @@ public class EventServiceImpl implements IEventService {
 
     @Override
     public Event getEventById(OAuth2AuthorizedClient oAuth2User, String id) throws GeneralSecurityException, IOException {
+
         var event = service.getCalendar(oAuth2User)
             .events()
             .get(calendarId, id)
@@ -113,14 +114,15 @@ public class EventServiceImpl implements IEventService {
         event.setEnd(time.get("eventEndTime"));
 
         // Update the event in Google Calendar
-        this.service.getCalendar(oAuth2User)
+        var updatedEvent = this.service.getCalendar(oAuth2User)
             .events()
             .update(calendarId, data.getId(), event)
             .execute();
-        return null;
+        return updatedEvent;
     }
 
     private Map<String, EventDateTime> calcStartAndEndTime(LocalDateTime startTime, LocalDateTime endTime) {
+
         var startTimeEpochMilli = DateTimeUtils.getDateTimeInEpochMilli(startTime);
         var eventStartTime = new EventDateTime();
         eventStartTime.setDateTime(new DateTime(startTimeEpochMilli));
@@ -128,7 +130,6 @@ public class EventServiceImpl implements IEventService {
         var endTimeEpochMilli = DateTimeUtils.getDateTimeInEpochMilli(endTime);
         var eventEndTime = new EventDateTime();
         eventEndTime.setDateTime(new DateTime(endTimeEpochMilli));
-
         return Map.of("eventStartTime", eventStartTime, "eventEndTime", eventEndTime);
     }
 
@@ -142,7 +143,7 @@ public class EventServiceImpl implements IEventService {
 
     @Override
     public WeekSummaryResponse thisWeekSummary(OAuth2AuthorizedClient oAuth2User) throws GeneralSecurityException, IOException {
-        // Get today's date
+
         var today = LocalDate.now();
 
         // Calculate the start and end of the week
@@ -176,6 +177,7 @@ public class EventServiceImpl implements IEventService {
                 var time1 = eventStartTime.getDateTime();
                 var time2 = eventEndTime.getDateTime();
 
+                //checking if event have start and time
                 if (time1 == null && time2 == null) return;
 
                 var startInstant = Instant.ofEpochMilli(eventStartTime.getDateTime().getValue());
@@ -186,7 +188,6 @@ public class EventServiceImpl implements IEventService {
         var weekSummary = new WeekSummaryResponse();
         weekSummary.setAllEventsThisWeek(events.getItems());
         weekSummary.setTotalNumberOfHours(totalNumberOfHours);
-
         return weekSummary;
     }
 }

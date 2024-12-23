@@ -2,6 +2,7 @@ package com.eventmanagement.events;
 
 import com.eventmanagement.events.DTO.EventDTO;
 import com.eventmanagement.events.service.IEventService;
+import com.eventmanagement.response.events.WeekSummaryResponse;
 import com.google.api.services.calendar.model.Event;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -19,6 +20,8 @@ import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.text.ParseException;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping(path = "/apiv1/events")
@@ -38,7 +41,7 @@ public class EventsController {
             content = {@Content(mediaType = "application/json",
                 schema = @Schema(implementation = Event.class))}),
     })
-    public ResponseEntity<?> getAllEvents(@RegisteredOAuth2AuthorizedClient("google") OAuth2AuthorizedClient oAuth2Client, @RequestParam(name = "month", required = false) Integer month, @RequestParam(name = "year", required = false) Integer year) throws GeneralSecurityException, IOException, ParseException {
+    public ResponseEntity<List<Event>> getAllEvents(@RegisteredOAuth2AuthorizedClient("google") OAuth2AuthorizedClient oAuth2Client, @RequestParam(name = "month", required = false) Integer month, @RequestParam(name = "year", required = false) Integer year) throws GeneralSecurityException, IOException, ParseException {
 
         log.info("Request received for all Events");
         log.info("Optional Params are Year {} month{}", year, month);
@@ -46,7 +49,7 @@ public class EventsController {
     }
 
     @GetMapping("/event-by-id/{id}")
-    public ResponseEntity<?> getEventById(@RegisteredOAuth2AuthorizedClient("google") OAuth2AuthorizedClient oAuth2Client, @PathVariable String id) throws GeneralSecurityException, IOException, ParseException {
+    public ResponseEntity<Event> getEventById(@RegisteredOAuth2AuthorizedClient("google") OAuth2AuthorizedClient oAuth2Client, @PathVariable String id) throws GeneralSecurityException, IOException {
 
         log.info("Request received for Event by {}", id);
         return ResponseEntity.ok(eventService.getEventById(oAuth2Client, id));
@@ -59,7 +62,7 @@ public class EventsController {
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "successful operation")
     })
-    public ResponseEntity<?> addEvents(@RegisteredOAuth2AuthorizedClient("google") OAuth2AuthorizedClient oAuth2Client, @RequestBody EventDTO eventDTO) throws GeneralSecurityException, IOException {
+    public ResponseEntity<Event> addEvents(@RegisteredOAuth2AuthorizedClient("google") OAuth2AuthorizedClient oAuth2Client, @RequestBody EventDTO eventDTO) throws GeneralSecurityException, IOException {
 
         log.info("Request received for add event");
         return ResponseEntity.ok(this.eventService.createEvent(oAuth2Client, eventDTO));
@@ -72,7 +75,7 @@ public class EventsController {
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "successful operation")
     })
-    public ResponseEntity<?> updateEvents(@RegisteredOAuth2AuthorizedClient("google") OAuth2AuthorizedClient oAuth2Client, @RequestBody EventDTO eventUpdateDTO) throws GeneralSecurityException, IOException {
+    public ResponseEntity<Event> updateEvents(@RegisteredOAuth2AuthorizedClient("google") OAuth2AuthorizedClient oAuth2Client, @RequestBody EventDTO eventUpdateDTO) throws GeneralSecurityException, IOException {
 
         log.info("Request received update event");
         return ResponseEntity.ok(this.eventService.updateEvent(oAuth2Client, eventUpdateDTO));
@@ -85,14 +88,14 @@ public class EventsController {
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "successful operation")
     })
-    public ResponseEntity<?> deleteEvents(@RegisteredOAuth2AuthorizedClient("google") OAuth2AuthorizedClient oAuth2Client, @PathVariable String id) throws GeneralSecurityException, IOException {
+    public ResponseEntity<Map<String, String>> deleteEvents(@RegisteredOAuth2AuthorizedClient("google") OAuth2AuthorizedClient oAuth2Client, @PathVariable String id) throws GeneralSecurityException, IOException {
 
         log.info("Request received delete event");
         return ResponseEntity.ok(this.eventService.deleteEvent(oAuth2Client, id));
     }
 
     @GetMapping("/week-summary")
-    public ResponseEntity<?> thisWeekSummary(@RegisteredOAuth2AuthorizedClient("google") OAuth2AuthorizedClient oAuth2Client) throws GeneralSecurityException, IOException, ParseException {
+    public ResponseEntity<WeekSummaryResponse> thisWeekSummary(@RegisteredOAuth2AuthorizedClient("google") OAuth2AuthorizedClient oAuth2Client) throws GeneralSecurityException, IOException {
 
         log.info("Request received for this week summary");
         return ResponseEntity.ok(eventService.thisWeekSummary(oAuth2Client));

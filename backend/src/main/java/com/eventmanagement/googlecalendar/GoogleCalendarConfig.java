@@ -43,9 +43,10 @@ public class GoogleCalendarConfig {
     }
 
     public Calendar getCalendar(OAuth2AuthorizedClient client) throws GeneralSecurityException, IOException {
+        
         HttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
 
-        //to extract refresh token and save it on first request
+        //to extract refresh token and persist it on first request. Because google sends refresh_token only on first request
         saveRefreshTokenOnFirstRequest(client);
 
         var user = this.userRepo.findUserByUsername(client.getPrincipalName());
@@ -64,7 +65,7 @@ public class GoogleCalendarConfig {
             .setClientAuthentication(new ClientParametersAuthentication(clientId, clientSecret))
             .build()
             .setAccessToken(client.getAccessToken().getTokenValue())
-            .setRefreshToken(this.refreshToken);
+            .setRefreshToken(this.refreshToken);//ALERT change this when you have that can persist refresh token.
 
         log.info("Connecting to the Google Calender Server");
 
@@ -74,6 +75,7 @@ public class GoogleCalendarConfig {
     }
 
     private void saveRefreshTokenOnFirstRequest(OAuth2AuthorizedClient client) {
+
         try {
             var ref_token = client.getRefreshToken().getTokenValue();
             if (ref_token.equals(null)) return;
