@@ -1,6 +1,7 @@
-package com.eventmanagement.exception.custom.NoUserFoundException;
+package com.eventmanagement.exception.custom;
 
-import com.eventmanagement.exception.custom.AbstractCustomException;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.http.HttpStatus;
 
 public class NoUserFoundException extends AbstractCustomException {

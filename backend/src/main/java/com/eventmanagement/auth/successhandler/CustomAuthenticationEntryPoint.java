@@ -26,6 +26,5 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
         response.setStatus(HttpServletResponse.SC_OK);
         var res = Map.of("redirectUrl", "http://localhost:8080/oauth2/authorization/google");
         objectMapper.writeValue(response.getWriter(), res);
-
     }
 }

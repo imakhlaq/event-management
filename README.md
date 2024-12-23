@@ -11,7 +11,6 @@ This system is built using Spring Boot for the backend and includes OAuth 2.0 au
 - User Authentication: Google OAuth 2.0 authentication for users to sign in with their Google accounts.
 - Event Management: Allows users to perform CRUD operations on their Google Calendar events.
 - Event Summary: Calculates total hours allocated for events in a selected week.
-- Frontend: A nextjs interface for interacting with the backend.
 
 ## Tech Stack
 
@@ -27,8 +26,14 @@ This system is built using Spring Boot for the backend and includes OAuth 2.0 au
 - Spring Boot (Java)
 - Spring Security (OAuth2)
 - Spring Data JPA (for persistence)
-- H2 Database for InMemoryStorage
+- H2 (In-memory database)
+- Spring Data JPA (if needed for user/session persistence)
 - Swagger (for API documentation)
+
+### Tools:
+
+- Maven for project build management
+- Git for version control
 
 ### Authentication:
 
@@ -36,7 +41,7 @@ This system is built using Spring Boot for the backend and includes OAuth 2.0 au
 
 ### Google API:
 
-- Google Calendar API
+- Google Calendar API : Google Calendar API for event management
 
 ## Prerequisites
 
@@ -47,14 +52,21 @@ Before running the application, make sure you have the following installed:
 - Gradle (for building Spring Boot backend)
 - Pnpm (for building Nextjs frontend)
 
-## Setup
+## Setup Instructions
 
-- ### 1. Frontend (Next.js)
-
-  - #### 1. Clone the repository:
+- ### 1. Clone the Repository
 
   ```
-  git clone https://github.com/imakhlaq/event-management
+  git clone https://github.com/yourusername/event-management-system.git
+  cd event-management-system
+
+  ```
+
+- ### 2. Frontend (Next.js)
+
+  - #### 1. Navigate to the frontend directory::
+
+  ```
   cd event-management/frontend
   ```
 
@@ -78,7 +90,7 @@ Before running the application, make sure you have the following installed:
 
   The frontend will be available at http://localhost:3000.
 
-- ### 2. Backend (Spring Boot)
+- ### 3. Backend (Spring Boot)
 
   - #### 1. Navigate to the backend directory:
 
@@ -86,7 +98,8 @@ Before running the application, make sure you have the following installed:
   cd event-management/backend
   ```
 
-  - #### 2. Configure Google OAuth2: Create a application.properties or application.yml file and configure the OAuth2 login:
+  - #### 2. Configure the H2 Database
+    In application.properties or application.yml, configure the H2 in-memory database:
 
   ```
   spring.application.name=eventmanagement
@@ -101,10 +114,20 @@ Before running the application, make sure you have the following installed:
   spring.jpa.generate-ddl=true
   spring.jpa.database-platform=org.hibernate.dialect.H2Dialect
 
-  spring.security.oauth2.client.registration.google.client-id=
-  spring.security.oauth2.client.registration.google.client-secret=
+  ```
+
+  - #### 3. Configure the Google OAuth2 Integration
+  - Create a Google Developer Console project.
+  - Enable the Google Calendar API.
+  - Obtain OAuth2 credentials (Client ID and Client Secret).
+  - Add Google OAuth configuration in application.properties:
+
+  ```
+  spring.security.oauth2.client.registration.google.client-id=YOUR_GOOGLE_CLIENT_ID
+  spring.security.oauth2.client.registration.google.client-secret=YOUR_GOOGLE_CLIENT_SECRET
   spring.security.oauth2.client.registration.google.scope=openid,email,profile,https://www.googleapis.com/auth/calendar
-  spring.security.oauth2.client.provider.google.token-uri=
+  spring.security.oauth2.client.provider.google.token-uri=https://oauth2.googleapis.com/token
+  spring.security.oauth2.client.provider.google.authorization-uri=https://accounts.google.com/o/oauth2/v2/auth?access_type=offline
 
   redirect_url=http://localhost:3000/dashboard
   app.name=eventmanagement
@@ -114,19 +137,19 @@ Before running the application, make sure you have the following installed:
 
   ```
 
-  - #### 3. Build the Spring Boot project:
+- #### 3. Install Dependencies:
 
-  ```
-  gradle install
-  ```
+```
+gradle install
+```
 
-  - #### 4. Run the Spring Boot application:
+- #### 4. Run the Spring Boot application:
 
-  ```
-  ./gradlew bootRun
-  ```
+```
+./gradlew bootRun
+```
 
-  The backend will be available at http://localhost:8080.
+The backend will be available at http://localhost:8080.
 
 - ## Google Calendar API Setup
 
@@ -143,27 +166,83 @@ Before running the application, make sure you have the following installed:
 - The user is redirected to Google OAuth2 login when trying to access protected resources.
 - After successful authentication, the user is granted access to the application and their Google Calendar data.
 - The backend securely stores the user's Google OAuth2 tokens for API calls.
+- ![oauth2 authentication flow](https://substackcdn.com/image/fetch/f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F28f8b45a-179e-4d5a-a29a-ce156ca4e784_3706x2366.png)
 
 - ## API Documentation (Swagger)
 
-#### The backend API documentation is available through Swagger. You can view and interact with the API endpoints by navigating to:
+  #### The backend API documentation is available through Swagger. You can view and interact with the API endpoints by navigating to:
 
-```
-http://localhost:8080/swagger-ui.html
-```
+  ```
+  http://localhost:8080/swagger-ui.html
+  ```
 
-This will provide a detailed overview of all available endpoints and their parameters.
+  This will provide a detailed overview of all available endpoints and their parameters.
 
 - ## Endpoints
 
-- ### 1. Google Calendar CRUD Operations
+- ### 1. GET /api/calendar/events
 
-  - #### Create an Event: POST /api/calendar/events
-  - #### Get Events: GET /api/calendar/events
-  - #### Update an Event: PUT /api/calendar/events/{eventId}
-  - #### Delete an Event: DELETE /api/calendar/events/{eventId}
+  Fetch a list of all events for the authenticated user. You can also get events by month by poviding query parms.
 
-- ## Deployment
+  Example:
+
+  ```
+  GET  http://localhost:8080/apiv1/events/get-all-events
+  ```
+
+  ```
+  GET http://localhost:8080/apiv1/events/get-all-events?month={month}&year={year}
+  ```
+
+- ### 2. POST /api/calendar/events
+
+  Create a new event. You must send a JSON object containing the event details (summary, location, start time, and end time).
+
+  Example:
+
+  ```
+  POST http://localhost:8080/api/calendar/events
+  ```
+
+- ### 3. PUT /api/calendar/events/{eventId}
+
+  Update an existing event. You need to specify the eventId and provide updated event details.
+
+  Example:
+
+  ```
+  PUT http://localhost:8080/api/calendar/events/{eventId}
+  ```
+
+- ### 4. DELETE /api/calendar/events/{eventId}
+
+  Delete an event by its eventId.
+
+  Example:
+
+  ```
+  DELETE http://localhost:8080/api/calendar/events/{eventId}
+  ```
+
+## Error Handling
+
+Ensure to handle errors appropriately throughout the system:
+
+Invalid credentials: If OAuth fails or the user is not authenticated.
+Google API errors: Handle API errors when interacting with Google Calendar (e.g., event not found).
+Input validation: Validate inputs for creating and updating events.
+Example Error Response:
+
+```
+{
+     message:"No Refresh Token Available.",
+     path: "/apiv1/events/get-all-events",
+     statusCode:"401",
+     timestamp:"12-12-2024:02:33:00"
+}
+```
+
+## Deployment
 
 To deploy this application, you can follow these steps:
 
@@ -175,8 +254,9 @@ To deploy this application, you can follow these steps:
 
 2.  Build the Spring Boot backend as a JAR file with:
 
-    ```
-    ./gradlew build
-    ```
+```
+./gradlew build
+
+```
 
 3.  Deploy both parts to your desired cloud service (e.g., AWS, Heroku, Google Cloud, etc.).

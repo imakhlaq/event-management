@@ -1,4 +1,4 @@
-package com.eventmanagement.auth.repository;
+package com.eventmanagement.repository;
 
 import com.eventmanagement.models.User;
 import org.springframework.data.jpa.repository.JpaRepository;

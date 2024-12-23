@@ -2,6 +2,7 @@ package com.eventmanagement.exception.handlers;
 
 import com.eventmanagement.exception.custom.NoRefreshTokenException;
 import com.eventmanagement.response.error.ErrorResponse;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -15,10 +16,13 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(NoRefreshTokenException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ResponseEntity<ErrorResponse> handleNoRefreshTokenException(Exception e) {
+    public ResponseEntity<ErrorResponse> handleNoRefreshTokenException(NoRefreshTokenException e, HttpServletRequest request) {
 
         var customException = ErrorResponse.builder()
+            .message(e.message)
+            .statusCode(e.statusCode)
             .timestamp(LocalDateTime.now())
+            .path(request.getContextPath())
             .build();
         return ResponseEntity.badRequest().body(customException);
     }

@@ -1,6 +1,6 @@
 package com.eventmanagement.auth.config;
 
-import com.eventmanagement.auth.repository.IUserRepo;
+import com.eventmanagement.repository.IUserRepo;
 import com.eventmanagement.auth.successhandler.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -1,6 +1,6 @@
 package com.eventmanagement.auth.successhandler;
 
-import com.eventmanagement.auth.repository.IUserRepo;
+import com.eventmanagement.repository.IUserRepo;
 import com.eventmanagement.models.User;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
