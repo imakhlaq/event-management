@@ -31,7 +31,7 @@ export async function updateEvent(data: EventData) {
 
 export async function deleteEventById(id: string) {
 
-    const deleteEventByIDURI = url + `/apiv1/events/delete/${id}`
+    const deleteEventByIDURI = url + `/apiv1/events/delete-event/${id}`
     return await service.delete<DeleteEventRes>(deleteEventByIDURI);
 }
 

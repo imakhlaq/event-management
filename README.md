@@ -180,48 +180,68 @@ The backend will be available at http://localhost:8080.
 
 - ## Endpoints
 
-- ### 1. GET /api/calendar/events
+- ### 1. GET /apiv1/events/get-events
 
   Fetch a list of all events for the authenticated user. You can also get events by month by poviding query parms.
 
   Example:
 
   ```
-  GET  http://localhost:8080/apiv1/events/get-all-events
+  GET  http://localhost:8080/apiv1/events/get-events
   ```
 
   ```
-  GET http://localhost:8080/apiv1/events/get-all-events?month={month}&year={year}
+  GET http://localhost:8080/apiv1/events/get-events?month={month}&year={year}
   ```
 
-- ### 2. POST /api/calendar/events
+- ### 2. GET /apiv1/events/event-by-id/{id}
+
+  Fetch a event for the authenticated user by the provided id.
+
+  Example:
+
+  ```
+  GET  http://localhost:8080/apiv1/events/event-by-id/{id}
+  ```
+
+- ### 3. POST /apiv1/events/add-events
 
   Create a new event. You must send a JSON object containing the event details (summary, location, start time, and end time).
 
   Example:
 
   ```
-  POST http://localhost:8080/api/calendar/events
+  POST http://localhost:8080/apiv1/events/add-events
   ```
 
-- ### 3. PUT /api/calendar/events/{eventId}
+- ### 4. PUT /apiv1/events/update-event
 
   Update an existing event. You need to specify the eventId and provide updated event details.
 
   Example:
 
   ```
-  PUT http://localhost:8080/api/calendar/events/{eventId}
+  PATCH http://localhost:8080/apiv1/events/update-event
   ```
 
-- ### 4. DELETE /api/calendar/events/{eventId}
+- ### 5. DELETE /apiv1/events/delete-event/{id}
 
   Delete an event by its eventId.
 
   Example:
 
   ```
-  DELETE http://localhost:8080/api/calendar/events/{eventId}
+  DELETE http://localhost:8080/apiv1/events/delete-event/{id}
+  ```
+
+- ### 6. GET /apiv1/events/week-summary
+
+  Delete an event by its eventId.
+
+  Example:
+
+  ```
+  DELETE http://localhost:8080/apiv1/events/week-summary
   ```
 
 ## Error Handling

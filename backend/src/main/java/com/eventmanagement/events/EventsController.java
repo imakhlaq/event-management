@@ -78,7 +78,7 @@ public class EventsController {
         return ResponseEntity.ok(this.eventService.updateEvent(oAuth2Client, eventUpdateDTO));
     }
 
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/delete-event/{id}")
     @Operation(
         summary = "Fetch all plants",
         description = "fetches all plant entities and their data from data source")
