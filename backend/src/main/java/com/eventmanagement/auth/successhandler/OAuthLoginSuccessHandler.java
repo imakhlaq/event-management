@@ -34,7 +34,10 @@ public class OAuthLoginSuccessHandler implements AuthenticationSuccessHandler {
         var authid = oAuth2Client.getAuthorizedClientRegistrationId();
 
         var userInDB = this.userRepo.findUserByUsername(username);
-        if (userInDB.isPresent()) response.sendRedirect(redirectUrlAfterSuccessfulLogin);
+        if (userInDB.isPresent()) {
+            response.sendRedirect(redirectUrlAfterSuccessfulLogin);
+            return;
+        }
 
         log.info("Login SuccessFull username {}", username);
         //insert token in the refresh_token into db
@@ -46,5 +49,6 @@ public class OAuthLoginSuccessHandler implements AuthenticationSuccessHandler {
         log.info("Added {} to db", user.getUsername());
 
         response.sendRedirect(redirectUrlAfterSuccessfulLogin);
+        return;
     }
 }

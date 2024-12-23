@@ -2,6 +2,9 @@ package com.eventmanagement.auth.config;
 
 import com.eventmanagement.repository.IUserRepo;
 import com.eventmanagement.auth.successhandler.*;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -9,10 +12,13 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.cors.CorsConfiguration;
 
+import java.io.IOException;
 import java.util.List;
 
 @EnableWebSecurity
@@ -58,12 +64,12 @@ public class SecurityConfig {
                         .userService(oAuth2UserService)
                     )
                     .successHandler(new OAuthLoginSuccessHandler(this.userRepo, this.redirectUrlAfterSuccessfulLogin))
+                    .failureHandler(new CustomOauthFailHandler())
             ).exceptionHandling(exception ->
                 exception
                     .authenticationEntryPoint(new CustomAuthenticationEntryPoint(this.logInURl))
                     .accessDeniedHandler(new CustomAccessDeniedHandler(this.logInURl))
             );
-
         return http.build();
     }
 }
