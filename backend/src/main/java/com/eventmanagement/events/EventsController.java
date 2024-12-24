@@ -37,9 +37,7 @@ public class EventsController {
         summary = "Get all the events from the calendar.",
         description = "Fetches all events from the google calender.")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Found Events",
-            content = {@Content(mediaType = "application/json",
-                schema = @Schema(implementation = Event.class))}),
+        @ApiResponse(responseCode = "200", description = "Found Events")
     })
     public ResponseEntity<List<Event>> getAllEvents(@RegisteredOAuth2AuthorizedClient("google") OAuth2AuthorizedClient oAuth2Client, @RequestParam(name = "month", required = false) Integer month, @RequestParam(name = "year", required = false) Integer year) throws GeneralSecurityException, IOException, ParseException {
 
@@ -52,9 +50,7 @@ public class EventsController {
         summary = "Get a single event by id from the calender.",
         description = "Fetches a single event from google calender by provided id.")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Found a Event",
-            content = {@Content(mediaType = "application/json",
-                schema = @Schema(implementation = Event.class))}),
+        @ApiResponse(responseCode = "200", description = "Found a Event")
     })
     @GetMapping("/event-by-id/{id}")
     public ResponseEntity<Event> getEventById(@RegisteredOAuth2AuthorizedClient("google") OAuth2AuthorizedClient oAuth2Client, @PathVariable String id) throws GeneralSecurityException, IOException {
@@ -114,5 +110,4 @@ public class EventsController {
         log.info("Request received for this week summary");
         return ResponseEntity.ok(eventService.thisWeekSummary(oAuth2Client));
     }
-
 }
