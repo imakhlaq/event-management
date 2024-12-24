@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.time.LocalDateTime;
 
@@ -51,10 +52,24 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(GeneralSecurityException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ResponseEntity<ErrorResponse> handleGeneralSecurityException(GeneralSecurityException e, HttpServletRequest request) {
 
         log.error("GeneralSecurityException cause {}", e.getMessage());
+        var customException = ErrorResponse.builder()
+            .message(internalServerErrorMessage)
+            .statusCode(HttpStatus.INTERNAL_SERVER_ERROR)
+            .timestamp(LocalDateTime.now())
+            .path(request.getContextPath())
+            .build();
+        return ResponseEntity.badRequest().body(customException);
+    }
+
+    @ExceptionHandler(IOException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ResponseEntity<ErrorResponse> handleIOException(IOException e, HttpServletRequest request) {
+
+        log.error("IOException cause {}", e.getMessage());
         var customException = ErrorResponse.builder()
             .message(internalServerErrorMessage)
             .statusCode(HttpStatus.INTERNAL_SERVER_ERROR)
