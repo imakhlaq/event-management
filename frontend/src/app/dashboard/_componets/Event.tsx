@@ -46,9 +46,8 @@ export default function OneEvent({calendarEvent}: Props) {
             : "";
 
     return (
-        <TableRow>
+        <TableRow className="hover:bg-[hsl(24,62%,73%,40%)] rounded-2xl">
             <TableCell className="font-medium">
-                {" "}
                 <Link href={`/edit-event/${calendarEvent.id}`}>
                     {calendarEvent.summary}{" "}
                 </Link>
