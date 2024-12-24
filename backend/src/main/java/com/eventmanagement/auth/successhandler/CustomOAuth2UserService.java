@@ -8,12 +8,15 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 
+/**
+ * CustomOAuth2UserService is used to customize the user details fetched from the Oauth provider.
+ */
 @Service
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) {
-        
+
         // Fetch user info from the provider
         OAuth2User oAuth2User = super.loadUser(userRequest);
 

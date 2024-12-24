@@ -45,6 +45,12 @@ public class GoogleCalendarConfig {
         this.APPLICATION_NAME = appName;
     }
 
+    /**
+     * Creates a new calendar object needed to interact with the Google Calendar API.
+     *
+     * @param client The OAuth2AuthorizedClient object.
+     * @return The Calendar object.
+     */
     public Calendar getCalendar(OAuth2AuthorizedClient client) throws GeneralSecurityException, IOException {
 
         HttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
@@ -78,6 +84,12 @@ public class GoogleCalendarConfig {
             .build();
     }
 
+    /**
+     * Retrieves the refresh token from the OAuth2AuthorizedClient and saves it to the user object.
+     *
+     * @param client The OAuth2AuthorizedClient object.
+     * @return The user object with the refresh token saved.
+     */
     public User saveRefreshTokenOnFirstRequest(OAuth2AuthorizedClient client, User user) {
 
         var ref_token = Objects.requireNonNull(client.getRefreshToken()).getTokenValue();

@@ -14,6 +14,8 @@ type Props = {
     summary?: string;
 };
 export default function ListEvents({calendarEvents, summary}: Props) {
+
+    if (!calendarEvents) return;
     const content =
         summary === undefined ? "A list of your Events." : "This week summary";
     let hours;
@@ -27,7 +29,7 @@ export default function ListEvents({calendarEvents, summary}: Props) {
     return (
         <Table className="mt-20">
             <TableCaption>
-                <div className="flex justify-around mt-9 text-xl">
+                <div className="flex justify-around mt-5 mb-16 text-xl">
                     <div>{content}</div>
                     {summary && (
                         <div>

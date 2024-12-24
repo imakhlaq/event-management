@@ -11,6 +11,9 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 import java.io.IOException;
 import java.util.Map;
 
+/**
+ * CustomAuthenticationEntryPoint class is used to handle when the user tries to access the API without authentication.
+ */
 @Slf4j
 public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint {
 

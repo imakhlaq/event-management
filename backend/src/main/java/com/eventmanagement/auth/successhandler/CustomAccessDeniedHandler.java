@@ -11,6 +11,9 @@ import org.springframework.security.web.access.AccessDeniedHandler;
 import java.io.IOException;
 import java.util.Map;
 
+/**
+ * CustomAccessDeniedHandler is used to handle the denied exception by Oauth client.
+ */
 @Slf4j
 public class CustomAccessDeniedHandler implements AccessDeniedHandler {
 

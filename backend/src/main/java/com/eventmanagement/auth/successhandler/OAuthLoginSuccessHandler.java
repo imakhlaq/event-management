@@ -12,6 +12,9 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 
 import java.io.IOException;
 
+/**
+ * OAuthLoginSuccessHandler class is used to handle the successful login of the user.
+ */
 @Slf4j
 public class OAuthLoginSuccessHandler implements AuthenticationSuccessHandler {
 
