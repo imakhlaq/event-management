@@ -37,7 +37,7 @@ public class EventsController {
         summary = "Get all the events from the calendar",
         description = "fetches all plant entities and their data from data source")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Found the book",
+        @ApiResponse(responseCode = "200", description = "Found Events",
             content = {@Content(mediaType = "application/json",
                 schema = @Schema(implementation = Event.class))}),
     })
@@ -48,6 +48,14 @@ public class EventsController {
         return ResponseEntity.ok(eventService.getAllEvents(oAuth2Client, month, year));
     }
 
+    @Operation(
+        summary = "Get a single event by id from the calender.",
+        description = "fetches a single event from calender.")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Found a Event",
+            content = {@Content(mediaType = "application/json",
+                schema = @Schema(implementation = Event.class))}),
+    })
     @GetMapping("/event-by-id/{id}")
     public ResponseEntity<Event> getEventById(@RegisteredOAuth2AuthorizedClient("google") OAuth2AuthorizedClient oAuth2Client, @PathVariable String id) throws GeneralSecurityException, IOException {
 
@@ -57,11 +65,12 @@ public class EventsController {
 
     @PostMapping("/add-events")
     @Operation(
-        summary = "Fetch all plants",
-        description = "fetches all plant entities and their data from data source")
+        summary = "Add events to the calender",
+        description = "Add events to the calendar")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "successful operation")
-    })
+    }
+    )
     public ResponseEntity<Event> addEvents(@RegisteredOAuth2AuthorizedClient("google") OAuth2AuthorizedClient oAuth2Client, @RequestBody EventDTO eventDTO) throws GeneralSecurityException, IOException {
 
         log.info("Request received for add event");
