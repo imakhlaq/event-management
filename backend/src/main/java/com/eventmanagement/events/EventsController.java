@@ -34,8 +34,8 @@ public class EventsController {
 
     @GetMapping(path = "/get-events", produces = "application/json")
     @Operation(
-        summary = "Get all the events from the calendar",
-        description = "fetches all plant entities and their data from data source")
+        summary = "Get all the events from the calendar.",
+        description = "Fetches all events from the google calender.")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Found Events",
             content = {@Content(mediaType = "application/json",
@@ -50,7 +50,7 @@ public class EventsController {
 
     @Operation(
         summary = "Get a single event by id from the calender.",
-        description = "fetches a single event from calender.")
+        description = "Fetches a single event from google calender by provided id.")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Found a Event",
             content = {@Content(mediaType = "application/json",
@@ -69,8 +69,7 @@ public class EventsController {
         description = "Add events to the calendar")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "successful operation")
-    }
-    )
+    })
     public ResponseEntity<Event> addEvents(@RegisteredOAuth2AuthorizedClient("google") OAuth2AuthorizedClient oAuth2Client, @RequestBody EventDTO eventDTO) throws GeneralSecurityException, IOException {
 
         log.info("Request received for add event");
@@ -92,8 +91,8 @@ public class EventsController {
 
     @DeleteMapping("/delete-event/{id}")
     @Operation(
-        summary = "Fetch all plants",
-        description = "fetches all plant entities and their data from data source")
+        summary = "Deletes a calender event",
+        description = "Deletes a calender event data from data source")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "successful operation")
     })
@@ -104,6 +103,12 @@ public class EventsController {
     }
 
     @GetMapping("/week-summary")
+    @Operation(
+        summary = "Get Summary for one week",
+        description = "Get Summary for a week from Google calender")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "successful operation")
+    })
     public ResponseEntity<WeekSummaryResponse> thisWeekSummary(@RegisteredOAuth2AuthorizedClient("google") OAuth2AuthorizedClient oAuth2Client) throws GeneralSecurityException, IOException {
 
         log.info("Request received for this week summary");
