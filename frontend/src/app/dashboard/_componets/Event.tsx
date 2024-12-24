@@ -26,7 +26,7 @@ export default function OneEvent({calendarEvent}: Props) {
             })
         } catch (e) {
             toast({
-                title: "Update Failed",
+                title: "Event Delete Failed",
                 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                 // @ts-expect-error
                 description: e.message

@@ -7,7 +7,6 @@ import com.eventmanagement.utils.DateTimeUtils;
 import com.google.api.client.util.DateTime;
 import com.google.api.services.calendar.model.Event;
 import com.google.api.services.calendar.model.EventDateTime;
-import com.google.api.services.calendar.model.Events;
 import lombok.AllArgsConstructor;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.stereotype.Service;
@@ -15,7 +14,6 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.time.*;
-import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAdjusters;
 import java.util.List;
 import java.util.Map;
@@ -33,9 +31,6 @@ public class EventServiceImpl implements IEventService {
 
         // is user provides a month
         if (month != null && month <= 12) {
-
-            // Define a DateTimeFormatter for the output format
-            var formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssXXX");
 
             // Start of the month
             var startOfMonth = LocalDateTime.of(year, month, 1, 0, 0);
@@ -58,7 +53,7 @@ public class EventServiceImpl implements IEventService {
             return events.getItems();
         }
 
-        Events events = service.getCalendar(oAuth2User)
+        var events = service.getCalendar(oAuth2User)
             .events()
             .list(calendarId)
             .setOrderBy("startTime")
@@ -71,18 +66,17 @@ public class EventServiceImpl implements IEventService {
     @Override
     public Event getEventById(OAuth2AuthorizedClient oAuth2User, String id) throws GeneralSecurityException, IOException {
 
-        var event = service.getCalendar(oAuth2User)
+        return service.getCalendar(oAuth2User)
             .events()
             .get(calendarId, id)
             .execute();
-        return event;
     }
 
     @Override
     public Event createEvent(OAuth2AuthorizedClient oAuth2User, EventDTO data) throws GeneralSecurityException, IOException {
 
-        if (data.getStartTime().equals(null)) data.setStartTime(LocalDateTime.now());
-        if (data.getEndTime().equals(null)) data.setEndTime(data.getStartTime().plusDays(1));
+        if (data.getStartTime() == null) data.setStartTime(LocalDateTime.now());
+        if (data.getEndTime() == null) data.setEndTime(data.getStartTime().plusDays(1));
 
         var time = this.calcStartAndEndTime(data.getStartTime(), data.getEndTime());
 
@@ -93,11 +87,10 @@ public class EventServiceImpl implements IEventService {
         event.setStart(time.get("eventStartTime"));
         event.setEnd(time.get("eventEndTime"));
 
-        var createdEvent = this.service.getCalendar(oAuth2User)
+        return this.service.getCalendar(oAuth2User)
             .events()
             .insert(calendarId, event)
             .execute();
-        return createdEvent;
     }
 
     @Override
@@ -114,11 +107,10 @@ public class EventServiceImpl implements IEventService {
         event.setEnd(time.get("eventEndTime"));
 
         // Update the event in Google Calendar
-        var updatedEvent = this.service.getCalendar(oAuth2User)
+        return this.service.getCalendar(oAuth2User)
             .events()
             .update(calendarId, data.getId(), event)
             .execute();
-        return updatedEvent;
     }
 
     private Map<String, EventDateTime> calcStartAndEndTime(LocalDateTime startTime, LocalDateTime endTime) {
@@ -134,7 +126,7 @@ public class EventServiceImpl implements IEventService {
     }
 
     @Override
-    public Map deleteEvent(OAuth2AuthorizedClient oAuth2User, String id) throws GeneralSecurityException, IOException {
+    public Map<String, String> deleteEvent(OAuth2AuthorizedClient oAuth2User, String id) throws GeneralSecurityException, IOException {
 
         this.service.getCalendar(oAuth2User).events().delete(calendarId, id).execute();
         var message = "Event with id " + id + " delete";
@@ -162,7 +154,6 @@ public class EventServiceImpl implements IEventService {
         AtomicReference<Long> totalNumberOfHours = new AtomicReference<>(0L);
 
         events.getItems()
-            .stream()
             .forEach(event -> {
                 var eventStartTime = event.getStart();
                 var eventEndTime = event.getEnd();
@@ -173,8 +164,8 @@ public class EventServiceImpl implements IEventService {
                 //checking if event have start and time
                 if (time1 == null && time2 == null) return;
 
-                var startInstant = Instant.ofEpochMilli(eventStartTime.getDateTime().getValue());
-                var endInstant = Instant.ofEpochMilli(eventEndTime.getDateTime().getValue());
+                var startInstant = Instant.ofEpochMilli(time1.getValue());
+                var endInstant = Instant.ofEpochMilli(time2.getValue());
                 totalNumberOfHours.updateAndGet(v -> v + Duration.between(startInstant, endInstant).toMinutes());
             });
 
