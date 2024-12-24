@@ -113,7 +113,7 @@ Before running the application, make sure you have the following installed:
   spring.jpa.generate-ddl=true
   spring.jpa.database-platform=org.hibernate.dialect.H2Dialect
   ```
-  
+
   - #### 3. Configure the Google OAuth2 Integration
   - Create a Google Developer Console project.
   - Enable the Google Calendar API.
@@ -133,6 +133,7 @@ Before running the application, make sure you have the following installed:
   client-secret=
   refresh-token=
   ```
+
   - #### 4. Configure other environment variables
     In application.properties or application.yml, other needed environment variables:
 
@@ -157,21 +158,12 @@ Before running the application, make sure you have the following installed:
 
   The backend will be available at http://localhost:8080.
 
-- ## Google Calendar API Setup
-
-  ### To interact with the Google Calendar API, follow these steps:
-
-  - #### 1. Go to the Google Developer Console.
-  - #### 2. a new project or select an existing project.
-  - #### 3. the Google Calendar API.
-  - #### 4. Configure OAuth2 credentials under APIs & Services > Credentials and download the JSON file containing your credentials.
-  - #### 5. Set up your OAuth2 credentials in both the frontend and backend (as mentioned above).
-
 - ## Authentication Flow
 
 - The user is redirected to Google OAuth2 login when trying to access protected resources.
 - After successful authentication, the user is granted access to the application and their Google Calendar data.
 - The backend securely stores the user's Google OAuth2 tokens for API calls.
+
   - ![oauth2 authentication flow](https://substackcdn.com/image/fetch/f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F28f8b45a-179e-4d5a-a29a-ce156ca4e784_3706x2366.png)
 
     - ## API Documentation (Swagger)
@@ -187,48 +179,65 @@ Before running the application, make sure you have the following installed:
       - ## Endpoints
 
         - ### 1. GET /apiv1/events/get-events
+
           Fetch a list of all events for the authenticated user. You can also get events by month by providing query params.
-      
+
           Example
+
           ```
            GET http://localhost:8080/apiv1/events/get-events
           ```
+
           ```
           GET http://localhost:8080/apiv1/events/get-events?month={month}&year={year}
           ```
 
         - ### 2. GET /apiv1/events/event-by-id/{id}
+
           Fetch a event for the authenticated user by the provided id.
 
           Example
+
           ```
            GET http://localhost:8080/apiv1/events/event-by-id/{id}
           ```
+
         - ### 3. POST /apiv1/events/add-events
+
           Create a new event. You must send a JSON object containing the event details (summary, location, start time, and end time).
 
           Example
+
           ```
            GET http://localhost:8080/apiv1/events/get-events
           ```
+
         - ### 4. PATCH /apiv1/events/update-event
+
           Update an existing event. You need to specify the eventId and provide updated event details.
 
           Example
+
           ```
            PATCH http://localhost:8080/apiv1/events/update-event
           ```
+
         - ### 5. DELETE /apiv1/events/delete-event/{id}
+
           Delete an event by its eventId.
 
           Example
+
           ```
            DELETE http://localhost:8080/apiv1/events/delete-event/{id}
           ```
+
         - ### 6. GET /apiv1/events/week-summary
+
           Get all event in current week and create a summary for total no of hours.
 
           Example
+
           ```
            GET http://localhost:8080/apiv1/events/week-summary
           ```
@@ -253,15 +262,14 @@ timestamp:"12-12-2024:02:33:00"
 
 ## Deployment
 
-  To deploy this application, you can follow these steps:
+To deploy this application, you can follow these steps:
 
-  1.  Build the frontend with:
-      ```
-      pnpm run build
-      ```
-  2. Build the Spring Boot backend as a JAR file with:
-     ```
-     ./gradlew build
-     ```
-  3.  Deploy both parts to your desired cloud service (e.g., AWS, Heroku, Google Cloud, etc.).
-
+1.  Build the frontend with:
+    ```
+    pnpm run build
+    ```
+2.  Build the Spring Boot backend as a JAR file with:
+    ```
+    ./gradlew build
+    ```
+3.  Deploy both parts to your desired cloud service (e.g., AWS, Heroku, Google Cloud, etc.).
