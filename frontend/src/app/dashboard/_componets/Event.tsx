@@ -8,14 +8,12 @@ import {Button} from "@/components/ui/button";
 import {MdDeleteForever} from "react-icons/md";
 import {deleteEventById} from "@/utils/fetchingService";
 import {useToast} from "@/hooks/use-toast";
-import {useRouter} from "next/navigation";
 
 type Props = { calendarEvent: CalenderEvent };
 
 export default function OneEvent({calendarEvent}: Props) {
 
     const {toast} = useToast()
-    const router = useRouter()
 
     async function deleteHandler() {
         try {
@@ -24,6 +22,7 @@ export default function OneEvent({calendarEvent}: Props) {
                 title: "Event Deleted",
                 description: response.data.message
             })
+            location.reload();
         } catch (e) {
             toast({
                 title: "Event Delete Failed",
@@ -31,8 +30,6 @@ export default function OneEvent({calendarEvent}: Props) {
                 // @ts-expect-error
                 description: e.message
             });
-        } finally {
-            router.push("/dashboard")
         }
     }
 
