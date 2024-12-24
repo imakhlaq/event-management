@@ -1,5 +1,7 @@
 package com.eventmanagement.googlecalendar;
 
+import com.eventmanagement.exception.custom.NoRefreshTokenException;
+import com.eventmanagement.models.User;
 import com.eventmanagement.repository.IUserRepo;
 import com.eventmanagement.exception.custom.NoUserFoundException;
 import com.google.api.client.auth.oauth2.BearerToken;
@@ -47,16 +49,17 @@ public class GoogleCalendarConfig {
 
         HttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
 
-        //to extract refresh token and persist it on first request. Because google sends refresh_token only on first request
-        saveRefreshTokenOnFirstRequest(client);
-
         var user = this.userRepo.findUserByUsername(client.getPrincipalName());
         if (user.isEmpty()) throw new NoUserFoundException(HttpStatus.BAD_REQUEST, "User Doesn't exists in DB");
 
-        //NOTE when you will use a db that persist the toke it will be available
-//        var refreshToken = user.get().getRefreshToken();
-//        if (refreshToken.equals(null))
-//            throw new NoRefreshTokenException(HttpStatus.BAD_REQUEST, "Refresh Token for this user is not available");
+        User userWithRefreshToken = null;//NOTE when you will use a db that persist the toke it will be available in user object
+
+        if (user.get().getRefreshToken() == null) {
+            //to extract refresh token and persist it on first request. Because google sends refresh_token only on first request
+            userWithRefreshToken = saveRefreshTokenOnFirstRequest(client, user.get());
+        } else {
+            userWithRefreshToken = user.get();
+        }
 
         // Build the Credential with the Builder
         Credential builder = new Credential.Builder(BearerToken.authorizationHeaderAccessMethod())
@@ -75,21 +78,15 @@ public class GoogleCalendarConfig {
             .build();
     }
 
-    private void saveRefreshTokenOnFirstRequest(OAuth2AuthorizedClient client) {
+    public User saveRefreshTokenOnFirstRequest(OAuth2AuthorizedClient client, User user) {
 
-        try {
-            var ref_token = Objects.requireNonNull(client.getRefreshToken()).getTokenValue();
-            if (ref_token == null) return;
+        var ref_token = Objects.requireNonNull(client.getRefreshToken()).getTokenValue();
+        if (ref_token == null)
+            throw new NoRefreshTokenException(HttpStatus.BAD_REQUEST, "Refresh Token for this user is not available");
 
-            var user = this.userRepo.findUserByUsername(client.getPrincipalName());
-            if (user.isEmpty()) return;
-
-            var updatedUser = user.get();
-            log.info("Saving refresh token {} with user", ref_token);
-            updatedUser.setRefreshToken(ref_token.getBytes());
-            this.userRepo.save(updatedUser);
-        } catch (Exception e) {
-            log.info("RefreshToken is not available");
-        }
+        log.info("Saving refresh token {} with user", ref_token);
+        user.setRefreshToken(ref_token.getBytes());
+        this.userRepo.save(user);
+        return user;
     }
 }
