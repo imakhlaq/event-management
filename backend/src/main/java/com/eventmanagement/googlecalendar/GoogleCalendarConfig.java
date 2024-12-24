@@ -19,6 +19,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
+import java.util.Objects;
 
 import static com.google.api.client.googleapis.auth.oauth2.GoogleOAuthConstants.TOKEN_SERVER_URL;
 
@@ -43,14 +44,14 @@ public class GoogleCalendarConfig {
     }
 
     public Calendar getCalendar(OAuth2AuthorizedClient client) throws GeneralSecurityException, IOException {
-        
+
         HttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
 
         //to extract refresh token and persist it on first request. Because google sends refresh_token only on first request
         saveRefreshTokenOnFirstRequest(client);
 
         var user = this.userRepo.findUserByUsername(client.getPrincipalName());
-        if (!user.isPresent()) throw new NoUserFoundException(HttpStatus.BAD_REQUEST, "User Doesn't exists in DB");
+        if (user.isEmpty()) throw new NoUserFoundException(HttpStatus.BAD_REQUEST, "User Doesn't exists in DB");
 
         //NOTE when you will use a db that persist the toke it will be available
 //        var refreshToken = user.get().getRefreshToken();
@@ -77,17 +78,18 @@ public class GoogleCalendarConfig {
     private void saveRefreshTokenOnFirstRequest(OAuth2AuthorizedClient client) {
 
         try {
-            var ref_token = client.getRefreshToken().getTokenValue();
-            if (ref_token.equals(null)) return;
+            var ref_token = Objects.requireNonNull(client.getRefreshToken()).getTokenValue();
+            if (ref_token == null) return;
 
             var user = this.userRepo.findUserByUsername(client.getPrincipalName());
-            if (!user.isPresent()) return;
+            if (user.isEmpty()) return;
 
             var updatedUser = user.get();
-            updatedUser.setRefreshToken(ref_token);
+            log.info("Saving refresh token {} with user", ref_token);
+            updatedUser.setRefreshToken(ref_token.getBytes());
+            this.userRepo.save(updatedUser);
         } catch (Exception e) {
             log.info("RefreshToken is not available");
         }
-
     }
 }

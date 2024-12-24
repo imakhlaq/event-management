@@ -20,5 +20,5 @@ public class User {
     private String username;
     private String email;
     private String authId;
-    private String refreshToken;
+    private byte[] refreshToken;
 }

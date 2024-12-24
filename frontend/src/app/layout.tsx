@@ -29,7 +29,12 @@ export default function RootLayout({children}: Readonly<{
     return (
         <html lang="en">
         <body
-            className={`${roboto.variable} ${poppins.variable} antialiased font-sans bg-background bg-gradient-to-r from-slate-50 to-gray-200 `}
+            className={`${roboto.variable} ${poppins.variable} antialiasing font-sans
+            bg-[radial-gradient(hsl(0,72%,65%,40%),hsl(24,62%,73%,40%),hsl(var(--background))_60%)]
+            bg-cover
+            bg-no-repeat
+            bg-center
+            `}
         >
         <MuiWrapper>
             <NavBar/>
