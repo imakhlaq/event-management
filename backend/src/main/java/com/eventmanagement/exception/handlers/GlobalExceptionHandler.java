@@ -63,18 +63,4 @@ public class GlobalExceptionHandler {
             .build();
         return ResponseEntity.badRequest().body(customException);
     }
-
-//    @ExceptionHandler(Exception.class)
-//    @ResponseStatus(HttpStatus.BAD_REQUEST)
-//    public ResponseEntity<ErrorResponse> handleGenericException(Exception e, HttpServletRequest request) {
-//
-//        log.error("Exception cause {}", e.getMessage());
-//        var customException = ErrorResponse.builder()
-//            .message(internalServerErrorMessage)
-//            .statusCode(HttpStatus.INTERNAL_SERVER_ERROR)
-//            .timestamp(LocalDateTime.now())
-//            .path(request.getContextPath())
-//            .build();
-//        return ResponseEntity.badRequest().body(customException);
-//    }
 }
