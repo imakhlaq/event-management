@@ -7,13 +7,13 @@ import MuiWrapper from "@/utils/MUIWrapper";
 import {Toaster} from "@/components/ui/toaster";
 
 const poppins = Poppins({
-    weight: ["100", "900"],
+    weight: ["200", '300', "600"],
     subsets: ['latin'],
     variable: '--poppins-default'
 });
 
 const roboto = Roboto({
-    weight: ["100", "900"],
+    weight: ["100", '300', "500"],
     subsets: ['latin'],
     variable: '--roboto-default'
 });

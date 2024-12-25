@@ -15,7 +15,7 @@ type Props = {
 };
 export default function ListEvents({calendarEvents, summary}: Props) {
 
-    if (!calendarEvents) return;
+    if (calendarEvents.map === undefined) return;
     const content =
         summary === undefined ? "A list of your Events." : "This week summary";
     let hours;
