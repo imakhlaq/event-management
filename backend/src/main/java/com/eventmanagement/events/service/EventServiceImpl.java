@@ -128,7 +128,11 @@ public class EventServiceImpl implements IEventService {
     @Override
     public Map<String, String> deleteEvent(OAuth2AuthorizedClient oAuth2User, String id) throws GeneralSecurityException, IOException {
 
-        this.service.getCalendar(oAuth2User).events().delete(calendarId, id).execute();
+        this.service.getCalendar(oAuth2User)
+            .events()
+            .delete(calendarId, id)
+            .execute();
+
         var message = "Event with id " + id + " delete";
         return Map.of("Message", message);
     }

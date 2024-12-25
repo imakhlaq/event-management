@@ -2,10 +2,6 @@ package com.eventmanagement.auth.config;
 
 import com.eventmanagement.repository.IUserRepo;
 import com.eventmanagement.auth.successhandler.*;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -18,9 +14,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.cors.CorsConfiguration;
 
-import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 
 @EnableWebSecurity
 @EnableMethodSecurity
@@ -31,9 +25,10 @@ public class SecurityConfig {
     final private IUserRepo userRepo;
     final private RestClient restClient;
     final private CustomOAuth2UserService oAuth2UserService;
-    final private ObjectMapper objectMapper = new ObjectMapper();
+
     @Value("${login-url}")
     private String logInURl;
+
     @Value("${redirect-url-after-successful-login}")
     private String redirectUrlAfterSuccessfulLogin;
 
