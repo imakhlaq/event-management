@@ -55,6 +55,7 @@ public class GoogleCalendarConfig {
 
         HttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
 
+/*        //Use this code when you have a db that persist the token
         var user = this.userRepo.findUserByUsername(client.getPrincipalName());
         if (user.isEmpty()) throw new NoUserFoundException(HttpStatus.BAD_REQUEST, "User Doesn't exists in DB");
 
@@ -65,7 +66,7 @@ public class GoogleCalendarConfig {
             userWithRefreshToken = saveRefreshTokenOnFirstRequest(client, user.get());
         } else {
             userWithRefreshToken = user.get();
-        }
+        }*/
 
         // Build the Credential with the Builder
         Credential builder = new Credential.Builder(BearerToken.authorizationHeaderAccessMethod())
@@ -90,14 +91,14 @@ public class GoogleCalendarConfig {
      * @param client The OAuth2AuthorizedClient object.
      * @return The user object with the refresh token saved.
      */
-    public User saveRefreshTokenOnFirstRequest(OAuth2AuthorizedClient client, User user) {
+    private User saveRefreshTokenOnFirstRequest(OAuth2AuthorizedClient client, User user) {
 
-        var ref_token = Objects.requireNonNull(client.getRefreshToken()).getTokenValue();
+        var ref_token = client.getRefreshToken();
         if (ref_token == null)
             throw new NoRefreshTokenException(HttpStatus.BAD_REQUEST, "Refresh Token for this user is not available");
 
         log.info("Saving refresh token {} with user", ref_token);
-        user.setRefreshToken(ref_token.getBytes());
+        user.setRefreshToken(ref_token.getTokenValue().getBytes());
         this.userRepo.save(user);
         return user;
     }

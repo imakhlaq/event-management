@@ -1,13 +1,7 @@
 import {CalenderEvents} from "../../../../types";
 import OneEvent from "@/app/dashboard/_componets/Event";
-import {
-    Table,
-    TableBody,
-    TableCaption,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from "@/components/ui/table";
+import {Table, TableBody, TableCaption, TableHead, TableHeader, TableRow,} from "@/components/ui/table";
+import {sortEventsCb} from "@/utils/sorting";
 
 type Props = {
     calendarEvents: CalenderEvents;
@@ -51,7 +45,7 @@ export default function ListEvents({calendarEvents, summary}: Props) {
                 </TableRow>
             </TableHeader>
             <TableBody>
-                {calendarEvents.map((event) => (
+                {calendarEvents.sort(sortEventsCb).map((event) => (
                     <OneEvent key={event.id} calendarEvent={event}/>
                 ))}
             </TableBody>

@@ -1,6 +1,7 @@
 package com.eventmanagement.events.service;
 
 import com.eventmanagement.events.DTO.EventDTO;
+import com.eventmanagement.exception.custom.InvalidTimeFormatException;
 import com.eventmanagement.googlecalendar.GoogleCalendarConfig;
 import com.eventmanagement.response.events.WeekSummaryResponse;
 import com.eventmanagement.utils.DateTimeUtils;
@@ -8,6 +9,7 @@ import com.google.api.client.util.DateTime;
 import com.google.api.services.calendar.model.Event;
 import com.google.api.services.calendar.model.EventDateTime;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.stereotype.Service;
 
@@ -77,6 +79,10 @@ public class EventServiceImpl implements IEventService {
 
         if (data.getStartTime() == null) data.setStartTime(LocalDateTime.now());
         if (data.getEndTime() == null) data.setEndTime(data.getStartTime().plusDays(1));
+
+        if (data.getStartTime().isAfter(data.getEndTime())) {
+            throw new InvalidTimeFormatException(HttpStatus.BAD_REQUEST, "Start time cannot be after end time");
+        }
 
         var time = this.calcStartAndEndTime(data.getStartTime(), data.getEndTime());
 

@@ -6,6 +6,7 @@ import com.eventmanagement.response.error.ErrorResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -32,7 +33,7 @@ public class GlobalExceptionHandler {
             .message(e.message)
             .statusCode(e.statusCode)
             .timestamp(LocalDateTime.now())
-            .path(request.getContextPath())
+            .path(request.getServletPath())
             .build();
         return ResponseEntity.badRequest().body(customException);
     }
@@ -46,7 +47,21 @@ public class GlobalExceptionHandler {
             .message(e.message)
             .statusCode(e.statusCode)
             .timestamp(LocalDateTime.now())
-            .path(request.getContextPath())
+            .path(request.getServletPath())
+            .build();
+        return ResponseEntity.badRequest().body(customException);
+    }
+
+    @ExceptionHandler(DataAccessException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ResponseEntity<ErrorResponse> handleDataAccessException(NoUserFoundException e, HttpServletRequest request) {
+
+        log.error("DataAccessException cause {}", e.getMessage());
+        var customException = ErrorResponse.builder()
+            .message(e.message)
+            .statusCode(e.statusCode)
+            .timestamp(LocalDateTime.now())
+            .path(request.getServletPath())
             .build();
         return ResponseEntity.badRequest().body(customException);
     }
@@ -60,7 +75,7 @@ public class GlobalExceptionHandler {
             .message(internalServerErrorMessage)
             .statusCode(HttpStatus.INTERNAL_SERVER_ERROR)
             .timestamp(LocalDateTime.now())
-            .path(request.getContextPath())
+            .path(request.getServletPath())
             .build();
         return ResponseEntity.badRequest().body(customException);
     }
@@ -74,7 +89,7 @@ public class GlobalExceptionHandler {
             .message(internalServerErrorMessage)
             .statusCode(HttpStatus.INTERNAL_SERVER_ERROR)
             .timestamp(LocalDateTime.now())
-            .path(request.getContextPath())
+            .path(request.getServletPath())
             .build();
         return ResponseEntity.badRequest().body(customException);
     }
