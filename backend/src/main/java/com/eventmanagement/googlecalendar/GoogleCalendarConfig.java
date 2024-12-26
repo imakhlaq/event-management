@@ -30,17 +30,25 @@ public class GoogleCalendarConfig {
     private final String APPLICATION_NAME;
     private final IUserRepo userRepo;
     //Global instance of the JSON factory.
-    private final JsonFactory JSON_FACTORY = GsonFactory.getDefaultInstance();
-    @Value("${client-id}")
-    private String clientId;
-    @Value("${client-secret}")
-    private String clientSecret;
-    @Value("${refresh-token}")
-    private String refreshToken;
+    private final JsonFactory JSON_FACTORY;
 
-    public GoogleCalendarConfig(IUserRepo userRepo, @Value("${app.name}") String appName) {
+    private final String clientId;
+
+    private final String clientSecret;
+
+    private final String refreshToken;
+
+    public GoogleCalendarConfig(IUserRepo userRepo,
+                                @Value("${app.name}") String appName,
+                                @Value("${client-id}") String clientId,
+                                @Value("${client-secret}") String clientSecret,
+                                @Value("${refresh-token}") String refreshToken) {
         this.userRepo = userRepo;
         this.APPLICATION_NAME = appName;
+        this.clientId = clientId;
+        this.clientSecret = clientSecret;
+        this.refreshToken = refreshToken;
+        this.JSON_FACTORY = GsonFactory.getDefaultInstance();
     }
 
     /**
