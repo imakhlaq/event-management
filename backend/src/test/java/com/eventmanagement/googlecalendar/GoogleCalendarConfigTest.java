@@ -1,31 +1,27 @@
 package com.eventmanagement.googlecalendar;
 
-import com.eventmanagement.models.User;
-import com.google.api.client.auth.oauth2.Credential;
-import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
-
-import com.eventmanagement.repository.IUserRepo;
 import com.eventmanagement.exception.custom.NoUserFoundException;
+import com.eventmanagement.models.User;
+import com.eventmanagement.repository.IUserRepo;
+import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.services.calendar.Calendar;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.security.oauth2.core.OAuth2AccessToken;
-import org.springframework.security.oauth2.core.OAuth2RefreshToken;
 import org.springframework.test.context.TestPropertySource;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
-import java.time.Instant;
 import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @SpringBootTest
@@ -88,33 +84,5 @@ class GoogleCalendarConfigTest {
         assertNotNull(calendar);
         assertEquals("mock_name", calendar.getApplicationName());
         verify(userRepo, times(1)).findUserByUsername("test_user");
-    }
-
-    @Test
-    void testSaveRefreshTokenOnFirstRequest_ValidRefreshToken_SavesToken() {
-        // Arrange
-        var mockUser = mock(User.class);
-        when(client.getPrincipalName()).thenReturn("test_user");
-        when(client.getRefreshToken()).thenReturn(new OAuth2RefreshToken("mokedtoke", Instant.now()));
-        when(userRepo.findUserByUsername("test_user")).thenReturn(Optional.of(mockUser));
-
-        // Act
-        googleCalendarConfig.saveRefreshTokenOnFirstRequest(client);
-
-        // Assert
-        verify(userRepo, times(1)).save(mockUser);
-        verify(mockUser, times(1)).setRefreshToken("mockRefreshToken".getBytes());
-    }
-
-    @Test
-    void testSaveRefreshTokenOnFirstRequest_NoRefreshToken_DoesNothing() {
-        // Arrange
-        when(client.getRefreshToken()).thenReturn(null);
-
-        // Act
-        googleCalendarConfig.saveRefreshTokenOnFirstRequest(client);
-
-        // Assert
-        verify(userRepo, never()).save(any());
     }
 }

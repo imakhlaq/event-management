@@ -3,7 +3,6 @@ package com.eventmanagement.googlecalendar;
 import com.eventmanagement.exception.custom.NoRefreshTokenException;
 import com.eventmanagement.models.User;
 import com.eventmanagement.repository.IUserRepo;
-import com.eventmanagement.exception.custom.NoUserFoundException;
 import com.google.api.client.auth.oauth2.BearerToken;
 import com.google.api.client.auth.oauth2.ClientParametersAuthentication;
 import com.google.api.client.auth.oauth2.Credential;
@@ -21,7 +20,6 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
-import java.util.Objects;
 
 import static com.google.api.client.googleapis.auth.oauth2.GoogleOAuthConstants.TOKEN_SERVER_URL;
 

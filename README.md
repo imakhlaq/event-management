@@ -27,7 +27,6 @@ This system is built using Spring Boot for the backend and includes OAuth 2.0 au
 - Spring Security (OAuth2)
 - Spring Data JPA (for persistence)
 - H2 (In-memory database)
-- Spring Data JPA (if needed for user/session persistence)
 - Swagger (for API documentation)
 
 ### Tools:
